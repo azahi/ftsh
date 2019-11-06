@@ -1,27 +1,16 @@
 #include <libft.h>
+#include <env.h>
 
-int	print_var(char *args, char **env)
+int	print_var(char *args, t_elist **env)
 {
-	int	i;
-	int	j;
+	char *gvar;
 
-	i = 1;
-	j = 0;
-	while (args[i] && args[i] != ' ' && args[i] != '$' && args[i] != '\t')
-		i++;
-	while (env[j])
-	{
-		if (ft_strnequ(&(args[1]), env[j], i - 1) && env[j][i + -1] == '=')
-		{
-			ft_putstr(&(env[j][i]));
-			break ;
-		}
-		j++;
-	}
-	return (i);
+	gvar = get_var(args, env);
+	ft_putstr(gvar);
+	return (ft_strlen(gvar));
 }
 
-char	*get_var(char *args, char **env)
+char	*get_var(char *args, t_elist **env)
 {
 	int	i;
 	int	j;
@@ -39,7 +28,7 @@ char	*get_var(char *args, char **env)
 	return (NULL);
 }
 
-int	ft_echo(char *args, char **env)
+int	ft_echo(char *args, t_elist	**env)
 {
 	int	new_line;
 	int	i;
@@ -65,7 +54,7 @@ int	ft_echo(char *args, char **env)
 	return (0);
 }
 
-int	ft_cd(char *args, char **env)
+int	ft_cd(char *args, t_elist **env)
 {
 	static char	*prev_dir;
 	char		buff[512];
@@ -91,7 +80,7 @@ int	ft_cd(char *args, char **env)
 	return (0);
 }
 
-int ft_pwd(char *args)
+int	ft_pwd(char *args)
 {
 	char	buff[512];
 
@@ -112,7 +101,7 @@ void ft_exit()
 	exit(0);
 }
 
-int	call_function(char *cmd, char *args, char **env)
+int	call_function(char *cmd, char *args, t_elist **env)
 {
 	char	*trim_args;
 
@@ -123,11 +112,11 @@ int	call_function(char *cmd, char *args, char **env)
 		ft_cd(args, env);
 	else if(ft_strequ(cmd, "pwd"))
 		ft_pwd(args);
-	else if(ft_strcmp(cmd, "setenv"))
+	else if(ft_strequ(cmd, "setenv"))
 		ft_setenv(args);
-	else if(ft_strcmp(cmd, "unsetenv"))
+	else if(ft_strequ(cmd, "unsetenv"))
 		ft_unsetenv(args);
-	else if(ft_strcmp(cmd, "env"))
+	else if(ft_strequ(cmd, "env"))
 		ft_env(args);
 	else if(ft_strequ(cmd, "exit"))
 		ft_exit();
@@ -140,7 +129,7 @@ int	call_function(char *cmd, char *args, char **env)
 	return (0);
 }
 
-int	read_line(char *line, char **env)
+int	read_line(char *line, t_elist **env)
 {
 	char	*cmd;
 	int		i;
@@ -153,12 +142,21 @@ int	read_line(char *line, char **env)
 	return (0);
 }
 
-int main(int argc, char **argv, char **env)
+void	fail()
+{
+	exit(1);
+}
+
+int main(int argc, char **argv, char **envarray)
 {
 	char	*line;
+	t_elist	*env;
 	int		i;
 
 	i = 0;
+
+	array_to_lst(envarray, &env);
+
 	write(1, "$> ", 3);
 	while (get_next_line(0, &line) > 0)
 	{

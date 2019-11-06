@@ -13,11 +13,11 @@
 #ifndef ENV_H
 # define ENV_H
 
-typedef struct	s_elist
+typedef struct		s_elist
 {
-	char	*key;
-	char	*val;
-	struct	s_elist;
-}				t_elist;
+	char			*key;
+	char			*val;
+	struct s_elist	*next;
+}					t_elist;
 
 #endif
