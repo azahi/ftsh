@@ -11,7 +11,7 @@ int	print_var(char *args, char **env)
 		i++;
 	while (env[j])
 	{
-		if (ft_strnequ(&(args[1]), env[j], i - 1))
+		if (ft_strnequ(&(args[1]), env[j], i - 1) && env[j][i + -1] == '=')
 		{
 			ft_putstr(&(env[j][i]));
 			break ;
@@ -19,6 +19,24 @@ int	print_var(char *args, char **env)
 		j++;
 	}
 	return (i);
+}
+
+char	*get_var(char *args, char **env)
+{
+	int	i;
+	int	j;
+
+	i = 1;
+	j = 0;
+	while (args[i] && args[i] != ' ' && args[i] != '$' && args[i] != '\t')
+		i++;
+	while (env[j])
+	{
+		if (ft_strnequ(&(args[1]), env[j], i - 1) && env[j][i + -1] == '=')
+			return (&(env[j][i]));
+		j++;
+	}
+	return (NULL);
 }
 
 int	ft_echo(char *args, char **env)
@@ -47,6 +65,44 @@ int	ft_echo(char *args, char **env)
 	return (0);
 }
 
+int	ft_cd(char *args, char **env)
+{
+	static char	*prev_dir;
+	char		buff[512];
+
+	getcwd(buff, sizeof(buff));
+	if(!prev_dir)
+		prev_dir = ft_strdup(buff);
+	if(args[0] == '$' && args[1])
+		args = get_var(args, env);
+	if (args[0] == '-' && !args[1])
+	{
+		ft_putendl(prev_dir);
+		args = prev_dir;
+	}
+	if(chdir(args) == -1)
+	{
+		ft_putstr("cd: error: ");
+		ft_putendl(args);
+		return (1);
+	}
+	free(prev_dir);
+	prev_dir = ft_strdup(buff);
+	return (0);
+}
+
+int ft_pwd(char *args)
+{
+	char	buff[512];
+
+	if (*args)
+		ft_putendl("pwd: too many arguments");	
+	if (getcwd(buff, sizeof(buff)) == NULL)
+		return (1);
+	ft_putendl(buff);
+	return (0);
+}
+
 int	call_function(char *cmd, char *args, char **env)
 {
 	char	*trim_args;
@@ -54,8 +110,10 @@ int	call_function(char *cmd, char *args, char **env)
 	trim_args = ft_strtrim(args);
 	if (ft_strequ(cmd, "echo"))
 		ft_echo(args, env);
-	//else if(ft_strcmp(cmd, "cd"))
-	//	ft_cd(args);
+	else if(ft_strequ(cmd, "cd"))
+		ft_cd(args, env);
+	else if(ft_strequ(cmd, "pwd"))
+		ft_pwd(args);
 	//else if(ft_strcmp(cmd, "setenv"))
 	//	ft_setenv(args);
 	//else if(ft_strcmp(cmd, "unsetenv"))
