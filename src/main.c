@@ -43,7 +43,7 @@ int	ft_echo(char *args, char **env)
 {
 	int	new_line;
 	int	i;
-	
+
 	i = 0;
 	new_line = 1;
 	if (ft_strnequ(args, "-n", 2) && (args[2] == '\0' || args[2] == ' '
@@ -96,11 +96,20 @@ int ft_pwd(char *args)
 	char	buff[512];
 
 	if (*args)
-		ft_putendl("pwd: too many arguments");	
+		ft_putendl("pwd: too many arguments");
 	if (getcwd(buff, sizeof(buff)) == NULL)
 		return (1);
 	ft_putendl(buff);
 	return (0);
+}
+
+int	ft_env(char **args)
+{
+}
+
+void ft_exit()
+{
+	exit(0);
 }
 
 int	call_function(char *cmd, char *args, char **env)
@@ -114,14 +123,14 @@ int	call_function(char *cmd, char *args, char **env)
 		ft_cd(args, env);
 	else if(ft_strequ(cmd, "pwd"))
 		ft_pwd(args);
-	//else if(ft_strcmp(cmd, "setenv"))
-	//	ft_setenv(args);
-	//else if(ft_strcmp(cmd, "unsetenv"))
-	//	ft_unsetenv(args);
-	//else if(ft_strcmp(cmd, "env"))
-	//	ft_env(args);
-	//else if(ft_strcmp(cmd, "exit"))
-	//	ft_exit(args);
+	else if(ft_strcmp(cmd, "setenv"))
+		ft_setenv(args);
+	else if(ft_strcmp(cmd, "unsetenv"))
+		ft_unsetenv(args);
+	else if(ft_strcmp(cmd, "env"))
+		ft_env(args);
+	else if(ft_strequ(cmd, "exit"))
+		ft_exit();
 	else
 	{
 		free (trim_args);
@@ -157,4 +166,4 @@ int main(int argc, char **argv, char **env)
 		write(1, "$> ", 3);
 	}
 	exit (0);
-} 
+}
