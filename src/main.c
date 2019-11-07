@@ -1,34 +1,43 @@
 #include <libft.h>
 #include <env.h>
 
-int	print_var(char *args, t_elist **env)
+void	fail()
 {
-	char *gvar;
-
-	gvar = get_var(args, env);
-	ft_putstr(gvar);
-	return (ft_strlen(gvar));
+	exit(1);
 }
 
-char	*get_var(char *args, t_elist **env)
+char	*get_var(char *args, t_elist *env)
 {
-	int	i;
-	int	j;
+	int		i;
+	t_elist	*tmp;
 
+	tmp = env;
 	i = 1;
-	j = 0;
 	while (args[i] && args[i] != ' ' && args[i] != '$' && args[i] != '\t')
 		i++;
-	while (env[j])
+	while (tmp)
 	{
-		if (ft_strnequ(&(args[1]), env[j], i - 1) && env[j][i + -1] == '=')
-			return (&(env[j][i]));
-		j++;
+		if (ft_strnequ(&(args[1]), tmp->key, i - 1))
+			return (tmp->val);
+		tmp = tmp->next;
 	}
-	return (NULL);
+	return ("");
 }
 
-int	ft_echo(char *args, t_elist	**env)
+int		print_var(char *args, t_elist *env)
+{
+	char	*gvar;
+	int		len;
+	int i = 1;
+	gvar = get_var(args, env);
+	len = ft_strlen(gvar);
+	ft_putstr(gvar);
+	while (args[i] && args[i] != ' ' && args[i] != '$' && args[i] != '\t')
+		i++;
+	return (i + ((len) ? 0 : !(args[i] == '$')));
+}
+
+int	ft_echo(char *args, t_elist	*env)
 {
 	int	new_line;
 	int	i;
@@ -54,7 +63,7 @@ int	ft_echo(char *args, t_elist	**env)
 	return (0);
 }
 
-int	ft_cd(char *args, t_elist **env)
+int	ft_cd(char *args, t_elist *env)
 {
 	static char	*prev_dir;
 	char		buff[512];
@@ -92,8 +101,108 @@ int	ft_pwd(char *args)
 	return (0);
 }
 
-int	ft_env(char **args)
+int	ft_env(char *args, t_elist *env)
 {
+	t_elist *tmp;
+
+	tmp = env;
+	while(tmp)
+	{
+		ft_printf("%s=%s\n", tmp->key, tmp->val);
+		tmp = tmp->next;
+	}
+	return(0);
+}
+
+int	ft_setenv(char *args, t_elist **env)
+{
+	t_elist *tmp = *env;
+	int i = 0;
+	char *key;
+	char *val;
+	while(args[i] == ' ' || args[i] == '\t')
+		i++;
+	while(args[i] && args[i] != ' ' && args[i] != '\t')
+		i++;
+	key = ft_strndup(args, i);
+	while(args[i] == ' ' || args[i] == '\t')
+		i++;
+	val = ft_strdup(&(args[i]));
+
+	if(!*env)
+	{
+		if (!(*env = ft_memalloc(sizeof(t_elist))))
+			fail();
+		(*env)->key = key;
+		(*env)->val = val;
+	}
+	else
+	{
+		while (tmp->next)
+		{
+			if(ft_strequ(tmp->key, key))
+			{
+				free(key);
+				if (tmp->val)
+					free(tmp->val);
+				tmp->val = val;
+				return (0);
+			}
+			tmp=tmp->next;
+		}
+		if(ft_strequ(tmp->key, key))
+		{
+			free(key);
+			if (tmp->val)
+				free(tmp->val);
+			tmp->val = val;
+			return (0);
+		}
+		if (!(tmp->next = ft_memalloc(sizeof(t_elist))))
+			fail();
+		tmp->next->key = key;
+		tmp->next->val = val;
+	}
+	return(0);
+}
+
+int	ft_unsetenv(char *args, t_elist **env)
+{
+	char *key;
+	int i = 0;
+	t_elist *tmp = *env;
+	t_elist *tmp2;
+	while(args[i] == ' ' || args[i] == '\t')
+		i++;
+	while(args[i] && args[i] != ' ' && args[i] != '\t')
+		i++;
+	key = ft_strndup(args, i);
+	if((*env) && !(*env)->next && ft_strequ((*env)->key, key))
+	{
+		if((*env)->key)
+			free((*env)->key);
+		if((*env)->val)
+			free((*env)->val);
+		free((*env));
+		*env = NULL;
+	}
+	while (tmp && tmp->next)
+	{
+		if(ft_strequ(tmp->next->key, key))
+		{
+			if(tmp->next->key)
+				free(tmp->next->key);
+			if(tmp->next->val)
+				free(tmp->next->val);
+			tmp2 = tmp->next->next;
+			free(tmp->next);
+			tmp->next = tmp2;
+			break ;
+		}
+		tmp = tmp->next;
+	}
+	free(key);
+	return(0);
 }
 
 void ft_exit()
@@ -107,17 +216,17 @@ int	call_function(char *cmd, char *args, t_elist **env)
 
 	trim_args = ft_strtrim(args);
 	if (ft_strequ(cmd, "echo"))
-		ft_echo(args, env);
+		ft_echo(args, *env);
 	else if(ft_strequ(cmd, "cd"))
-		ft_cd(args, env);
+		ft_cd(args, *env);
 	else if(ft_strequ(cmd, "pwd"))
 		ft_pwd(args);
 	else if(ft_strequ(cmd, "setenv"))
-		ft_setenv(args);
+		ft_setenv(args, env);
 	else if(ft_strequ(cmd, "unsetenv"))
-		ft_unsetenv(args);
+		ft_unsetenv(args, env);
 	else if(ft_strequ(cmd, "env"))
-		ft_env(args);
+		ft_env(args, *env);
 	else if(ft_strequ(cmd, "exit"))
 		ft_exit();
 	else
@@ -142,10 +251,7 @@ int	read_line(char *line, t_elist **env)
 	return (0);
 }
 
-void	fail()
-{
-	exit(1);
-}
+
 
 int main(int argc, char **argv, char **envarray)
 {
@@ -160,7 +266,7 @@ int main(int argc, char **argv, char **envarray)
 	write(1, "$> ", 3);
 	while (get_next_line(0, &line) > 0)
 	{
-		read_line(line, env);
+		read_line(line, &env);
 		write(1, "$> ", 3);
 	}
 	exit (0);

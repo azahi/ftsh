@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.h                                              :+:      :+:    :+:   */
+/*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jdeathlo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,16 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ENV_H
-# define ENV_H
+#ifndef minishell_H
+# define minishell_H
 
-typedef struct		s_elist
-{
-	char			*key;
-	char			*val;
-	struct s_elist	*next;
-}					t_elist;
+void	fail();
 
-int		envadd(t_elist **elist, char *key, char *val);
-void	array_to_lst(char **env, t_elist **elist);
 #endif

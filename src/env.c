@@ -11,18 +11,31 @@
 /* ************************************************************************** */
 
 #include <env.h>
-#include <stdlib.h>
+#include <minishell.h>
+# include <libft.h>
 
 int	envadd(t_elist **elist, char *key, char *val)
 {
 	t_elist	*local;
 
-	if (!(local = malloc(sizeof(t_elist))))
-		fail();
-	local->key = key;
-	local->val = val;
-	local->next = *elist;
-	*elist = local;
+	local = *elist;
+	if (*elist)
+	{
+		while(local->next)
+			local = local->next;
+		if (!(local->next = ft_memalloc(sizeof(t_elist))))
+			fail();
+		local->next->key = key;
+		local->next->val = val;
+	}
+	else
+	{
+		if (!(*elist = ft_memalloc(sizeof(t_elist))))
+			fail();
+		(*elist)->key = key;
+		(*elist)->val = val;
+	}
+	return (0);
 }
 
 void	array_to_lst(char **env, t_elist **elist)
