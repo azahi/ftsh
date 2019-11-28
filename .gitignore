@@ -1,3 +1,7 @@
 *.a
 *.o
-*.out
+/21sh
+/42sh
+/ftsh
+/minishell
+Makefile
