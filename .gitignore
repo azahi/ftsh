@@ -1,11 +1,3 @@
 *.a
 *.o
-/21sh
-/42sh
-/ftsh
-/minishell
-CMakeCache.txt
-CMakeFiles/
-Makefile
-cmake_install.cmake
-compile_commands.json
+/build/
