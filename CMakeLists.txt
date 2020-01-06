@@ -9,7 +9,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_subdirectory(lib/libft)
 
 include_directories(
-        include
         lib/libft/include)
 
 add_executable(ftsh
