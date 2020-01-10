@@ -11,13 +11,13 @@
 
 #define BUILTIN_COUNT 7
 
-int builtin_cd(char **argv);
-int builtin_echo(char **argv);
-int builtin_env(char **argv);
-int builtin_exit(char **argv);
-int builtin_pwd(char **argv);
-int builtin_setenv(char **argv);
-int builtin_unsetenv(char **argv);
+int builtin_cd(int argc, char **argv, int *envc, char ***envp);
+int builtin_echo(int argc, char **argv, int *envc, char ***envp);
+int builtin_env(int argc, char **argv, int *envc, char ***envp);
+int builtin_exit(int argc, char **argv, int *envc, char ***envp);
+int builtin_pwd(int argc, char **argv, int *envc, char ***envp);
+int builtin_setenv(int argc, char **argv, int *envc, char ***envp);
+int builtin_unsetenv(int argc, char **argv, int *envc, char ***envp);
 
 char
 *builtin_names[] = {
@@ -30,7 +30,7 @@ char
 	"unsetenv"
 };
 
-int (*builtin_func[]) (char **) = {
+int (*builtin_func[])(int, char **, int *, char ***) = {
 	&builtin_cd,
 	&builtin_echo,
 	&builtin_env,

@@ -21,7 +21,7 @@ int
 sh_execvp(char **argv)
 {
 	pid_t pid, wpid;
-	int status;
+	int wstatus;
 
 	pid = fork();
 	if (pid == 0)
@@ -37,8 +37,8 @@ sh_execvp(char **argv)
 	else
 	{
 		do
-			wpid = waitpid(pid, &status, WUNTRACED);
-		while (!WIFEXITED(status) && !WIFSIGNALED(status));
+			wpid = waitpid(pid, &wstatus, WUNTRACED); // POSIX magic.
+		while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus));
 	}
 	return (1);
 }
@@ -47,7 +47,7 @@ sh_execvp(char **argv)
  * Executes a builtin if argv[0] corresponds to an element in builtin array.
  */
 int
-sh_exec(char **argv)
+sh_exec(int argc, char **argv, int envc, char **envp)
 {
 	if (!argv[0])
 		return (1);
@@ -55,7 +55,7 @@ sh_exec(char **argv)
 	for (int i = 0; i < BUILTIN_COUNT; i++)
 	{
 		if (strcmp(argv[0], builtin_names[i]) == 0)
-			return ((*builtin_func[i])(argv));
+			return ((*builtin_func[i])(argc, argv, &envc, &envp));
 	}
 
 	return (sh_execvp(argv));
@@ -63,9 +63,13 @@ sh_exec(char **argv)
 
 /**
  * Splits input into arguments.
+ *
+ * TODO We are hard splitting every white space that we encounter. This will
+ * surely break the possibility of using escape sequences like "foo\ bar" and
+ * etc.
  */
-char
-**sh_split(char *line)
+char **
+sh_split(char *line, int *linec)
 {
 	int bufsize = FTSH_TOK_BUFSIZE, i = 0;
 	char **tokens, *token;
@@ -96,14 +100,15 @@ char
 		token = strtok(NULL, FTSH_TOK_DELIM);
 	}
 	tokens[i] = NULL;
+	*linec = i;
 	return (tokens);
 }
 
 /**
  * Reads a line from input.
  */
-char
-*sh_getline(void)
+char *
+sh_getline(void)
 {
 	char *line = NULL;
 	size_t bufsize = 0;
@@ -116,19 +121,21 @@ char
  * The main shell loop.
  */
 void
-sh_loop(char **envp)
+sh_loop(int envc, char **envp)
 {
 	int status;
 
 	do
 	{
 		char *line, **argv;
+		int argc = 0;
 
 		printf("> ");
 		line = sh_getline();
-		argv = sh_split(line);
-		status = sh_exec(argv);
+		argv = sh_split(line, &argc);
+		status = sh_exec(argc, argv, envc, envp);
 
+		argc = 0;
 		free(line);
 		free(argv);
 	} while (status);
@@ -137,8 +144,8 @@ sh_loop(char **envp)
 int
 main(int argc, char **argv, char **envp)
 {
-	char **envp_c;
-	int opt;
+	char **envp_c; // TODO Use a gobal variable?
+	int opt, i;
 
 	while ((opt = getopt(argc, argv, "v")) != -1)
 	{
@@ -149,6 +156,7 @@ main(int argc, char **argv, char **envp)
 			default:
 				fprintf(stderr, "Usage: %s [-v]\n", argv[0]);
 				exit(EXIT_FAILURE);
+			// TODO -h
 		}
 	}
 
@@ -158,7 +166,7 @@ main(int argc, char **argv, char **envp)
 		perror(NULL);
 		exit(errno);
 	}
-	for (int i = 0; i < argc; i++)
+	for (i = 0; i < argc; i++)
 	{
 		if (!(envp_c[i] = malloc(sizeof (**envp_c) * strlen(envp[i]))))
 		{
@@ -168,7 +176,7 @@ main(int argc, char **argv, char **envp)
 		strcpy(envp_c[i], envp[i]);
 	}
 
-	sh_loop(envp_c);
+	sh_loop(i, envp_c);
 
 	exit(EXIT_SUCCESS);
 }
