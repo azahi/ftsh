@@ -1,10 +1,9 @@
-#include <ft_stdio.h>
-#include <ft_stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int
-builtin_exit(int argc, char **argv, int *envc, char ***envp)
+builtin_exit(int argc, char **argv)
 {
-	ft_printf("Bye.\n");
-	exit(EXIT_SUCCESS);
-	/* Not reachable */
+	puts("Bye.\n");
+	sh_exit(EXIT_SUCCESS);
 }

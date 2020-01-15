@@ -1,8 +1,8 @@
-#include <ft_stdio.h>
+#include <stdio.h>
 
 int
-builtin_env(int argc, char **argv, int *envc, char ***envp)
+builtin_env(int argc, char **argv)
 {
-	ft_printf("Not implemented.\n");
+	puts("Not implemented.\n");
 	return (1);
 }
