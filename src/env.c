@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "env.h"
 
 /**
@@ -33,12 +34,15 @@ lenv_init(void)
 	g_env = malloc(sizeof (**g_env) * (size + 1));
 	i = 0;
 	while (i < size)
+	{
 		g_env[i] = strdup(environ[i]); // FIXME Not allowed
+		i++;
+	}
 	g_env[size] = NULL;
 }
 
 /**
- * Destroy allocated environment table.
+ * Destroy the allocated environment table.
  */
 void
 lenv_deinit(void)

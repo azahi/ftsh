@@ -1,7 +1,11 @@
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 #include "minishell.h"
 #include "env.h"
+#include "prompt.h"
+#include "exec.h"
 
 /**
  * Splits input into arguments.
@@ -22,7 +26,7 @@ sh_split(char *line, int *linec)
 		exit(1);
 	}
 
-	token = strtok(line, TOK_DELIM);
+	token = strtok(line, TOK_DELIM); // FIXME Replace
 	while (token)
 	{
 		tokens[i] = token;
@@ -37,7 +41,7 @@ sh_split(char *line, int *linec)
 				exit(1);
 			}
 		}
-		token = strtok(NULL, TOK_DELIM);
+		token = strtok(NULL, TOK_DELIM); // FIXME Replace
 	}
 	tokens[i] = NULL;
 	*linec = i;
@@ -53,22 +57,21 @@ sh_getline(void)
 	char *line = NULL;
 	size_t bufsize = 0;
 
-	getline(&line, &bufsize, stdin); // FIXME Not allowed
+	getline(&line, &bufsize, stdin); // FIXME Replace
 	return (line);
 }
 
 int
-main(int argc, char **argv)
+main(void)
 {
 	char	**lv;
 	char	*line;
-	int		i;
 	int		lc;
 
 	lenv_init();
 	while (1)
 	{
-		printf("> ");
+		prompt();
 		line = sh_getline();
 		lv = sh_split(line, &lc);
 		sh_exec(lc, lv);

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(ftsh C)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra -ggdb")
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -18,6 +18,9 @@ add_executable(ftsh
         src/builtin/exit.c
         src/builtin/setenv.c
         src/builtin/unsetenv.c
-        src/main.c)
+        src/env.c
+        src/exec.c
+        src/main.c
+        src/prompt.c)
 
 target_link_libraries(ftsh ft)

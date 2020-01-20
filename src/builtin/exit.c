@@ -4,6 +4,9 @@
 int
 builtin_exit(int argc, char **argv)
 {
+	(void)argv;
+	(void)argc;
 	puts("Bye.\n");
-	sh_exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
+	return (0);
 }

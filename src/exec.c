@@ -1,13 +1,21 @@
 #include "exec.h"
 #include "builtin/builtin.h"
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <error.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
 
 /**
  * Executes from PATH.
  */
 static int
-exec_path(char **argv)
+sh_exec_path(char **argv)
 {
-	pid_t pid, wpid;
+	pid_t pid;
 	int wstatus;
 
 	pid = fork();
@@ -24,7 +32,7 @@ exec_path(char **argv)
 	else
 	{
 		do
-			wpid = waitpid(pid, &wstatus, WUNTRACED); // POSIX magic.
+			waitpid(pid, &wstatus, WUNTRACED);
 		while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus));
 	}
 	return (1);
@@ -45,5 +53,5 @@ sh_exec(int argc, char **argv)
 			return ((*builtin_func[i])(argc, argv));
 	}
 
-	return (sh_execvp(argv));
+	return (sh_exec_path(argv));
 }
