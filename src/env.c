@@ -1,5 +1,6 @@
-#include <stdlib.h>
-#include <string.h>
+#include <ft_stdlib.h>
+#include <ft_string.h>
+
 #include "env.h"
 
 /**
@@ -31,11 +32,15 @@ lenv_init(void)
 	int			i;
 
 	size = get_arr_size(environ);
-	g_env = malloc(sizeof (**g_env) * (size + 1));
+	if (!(g_env = malloc(sizeof (**g_env) * (size + 1))))
+	{
+		// TODO Clean exit
+		return ;
+	}
 	i = 0;
 	while (i < size)
 	{
-		g_env[i] = strdup(environ[i]); // FIXME Not allowed
+		g_env[i] = strdup(environ[i]); // FIXME Replace
 		i++;
 	}
 	g_env[size] = NULL;
@@ -56,6 +61,7 @@ lenv_deinit(void)
 		*e = NULL;
 		e++;
 	}
-	free(g_env);
+	free(e);
+	e = NULL;
 	g_env = NULL;
 }

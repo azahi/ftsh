@@ -3,4 +3,4 @@
 
 int sh_exec(int argc, char **argv);
 
-#endif /* EXEC_H */
+#endif

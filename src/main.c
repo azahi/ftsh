@@ -1,11 +1,11 @@
-#include <stdlib.h>
-#include <string.h>
+#include <ft_stdlib.h>
+#include <ft_string.h>
 #include <stdio.h>
 
-#include "minishell.h"
 #include "env.h"
-#include "prompt.h"
 #include "exec.h"
+#include "minishell.h"
+#include "prompt.h"
 
 /**
  * Splits input into arguments.
