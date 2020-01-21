@@ -17,6 +17,24 @@ get_arr_size(char **arr)
 	return (i);
 }
 
+char *
+lenv_getenv(const char *name)
+{
+	char **env = g_env;
+	size_t l = ft_strchrnul(name, '=') - name;
+	if (l && !name[l] && env)
+	{
+		env = g_env;
+		while (*env)
+		{
+			if (!strncmp(name, *env, l) && l[*env] == '=')
+				return (*env + l + 1);
+			env++;
+		}
+	}
+	return (NULL);
+}
+
 /**
  * Initialization of local environment table.
  * Note: This will utilize a global variable because we will need it

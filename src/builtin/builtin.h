@@ -10,8 +10,7 @@ int builtin_exit(int argc, char **argv);
 int builtin_setenv(int argc, char **argv);
 int builtin_unsetenv(int argc, char **argv);
 
-char *
-builtin_names[] = {
+const char *builtin_names[] = {
 	"cd",
 	"echo",
 	"env",

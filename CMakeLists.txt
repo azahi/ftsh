@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(ftsh C)
+project(minishell C)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra -ggdb")
 set(CMAKE_C_STANDARD 99)
@@ -11,7 +11,7 @@ add_subdirectory(lib/libft)
 include_directories(
         lib/libft/include)
 
-add_executable(ftsh
+add_executable(minishell
         src/builtin/cd.c
         src/builtin/echo.c
         src/builtin/env.c
@@ -23,4 +23,4 @@ add_executable(ftsh
         src/main.c
         src/prompt.c)
 
-target_link_libraries(ftsh ft)
+target_link_libraries(minishell ft)

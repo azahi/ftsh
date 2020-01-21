@@ -8,6 +8,7 @@
 #include "builtin/builtin.h"
 #include "env.h"
 #include "exec.h"
+#include "minishell.h"
 
 static char *
 getpath(void)
@@ -52,7 +53,7 @@ sh_exec_path(char **argv)
 	{
 		if (execvp(argv[0], argv) == -1) // TODO Switch to execve
 			uputs("execvp failed\n");
-		exit(1);
+		clean_exit(1);
 	}
 	else if (pid < 0)
 	{
@@ -75,7 +76,7 @@ sh_exec_builtin(int argc, char **argv)
 	i = 0;
 	while (i < BUILTIN_COUNT)
 	{
-		if (!strcmp(argv[0], builtin_names[i]))
+		if (!strcmp(argv[0], builtin_names[i])) // TODO Replace
 			return ((*builtin_func[i])(argc, argv));
 		i++;
 	}

@@ -7,6 +7,13 @@
 #include "minishell.h"
 #include "prompt.h"
 
+void
+clean_exit(int code)
+{
+	lenv_deinit();
+	exit(code);
+}
+
 /**
  * Splits input into arguments.
  *
@@ -17,13 +24,14 @@
 char **
 sh_split(char *line, int *linec)
 {
-	int bufsize = TOK_BUFSIZE, i = 0;
-	char **tokens, *token;
+	char **tokens;
+	char *token;
+	int bufsize = TOK_BUFSIZE;
+	int i = 0;
 
-	// FIXME Numerical operations are kinda useless on "constant" malloc().
 	if (!(tokens = malloc(sizeof (**tokens) * bufsize)))
 	{
-		exit(1);
+		clean_exit(1);
 	}
 
 	token = strtok(line, TOK_DELIM); // FIXME Replace
@@ -38,7 +46,7 @@ sh_split(char *line, int *linec)
 			if (!(tokens = realloc(tokens, sizeof (**tokens) * bufsize)))
 			{
 				// FIXME Iteratively clean tokens on failure.
-				exit(1);
+				clean_exit(1);
 			}
 		}
 		token = strtok(NULL, TOK_DELIM); // FIXME Replace
@@ -52,7 +60,7 @@ sh_split(char *line, int *linec)
  * Reads a line from input.
  */
 static char *
-sh_getline(void)
+sh_getline(void) // TODO get_next_line
 {
 	char *line = NULL;
 	size_t bufsize = 0;
@@ -79,5 +87,5 @@ main(void)
 		free(line);
 		free(lv);
 	}
-	exit(EXIT_SUCCESS);
+	clean_exit(EXIT_SUCCESS);
 }

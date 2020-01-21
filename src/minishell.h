@@ -7,4 +7,6 @@
 #define TOK_BUFSIZE 8
 #define TOK_DELIM "\t\n\v\f\r "
 
+void clean_exit(int code);
+
 #endif

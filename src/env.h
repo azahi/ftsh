@@ -1,9 +1,10 @@
 #ifndef ENV_H
 #define ENV_H
 
-char	**g_env;
+char **g_env;
 
-void	lenv_init(void);
-void	lenv_deinit(void);
+char *lenv_getenv(const char *name);
+void lenv_deinit(void);
+void lenv_init(void);
 
 #endif
