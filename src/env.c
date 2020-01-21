@@ -27,7 +27,7 @@ lenv_getenv(const char *name)
 		env = g_env;
 		while (*env)
 		{
-			if (!strncmp(name, *env, l) && l[*env] == '=')
+			if (!ft_strncmp(name, *env, l) && l[*env] == '=')
 				return (*env + l + 1);
 			env++;
 		}
@@ -37,10 +37,13 @@ lenv_getenv(const char *name)
 
 /**
  * Initialization of local environment table.
- * Note: This will utilize a global variable because we will need it
- * in order to be able to make a clean exit from a program once we
- * encounter a error during runtime.
+ * Note: This will utilize a global variable because we will need it in order
+ * to be able to make a clean exit from a program once we encounter a error
+ * during runtime.
  * Also for convenience because fuck 42's subjects anyway.
+ *
+ * FIXME Something goes horribly wrong in here: a first section gets rewritten
+ * and filled with gibberish. Not sure what's the case here yet.
  */
 void
 lenv_init(void)
@@ -50,7 +53,7 @@ lenv_init(void)
 	int			i;
 
 	size = get_arr_size(environ);
-	if (!(g_env = malloc(sizeof (**g_env) * (size + 1))))
+	if (!(g_env = malloc(sizeof (**g_env) * size)))
 	{
 		// TODO Clean exit
 		return ;
