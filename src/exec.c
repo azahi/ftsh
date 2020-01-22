@@ -26,7 +26,7 @@ getpath(void)
 			if (!(path = malloc(sizeof (*path) * path_len)))
 			{
 				// TODO Clean exit
-				return (NULL);
+				exit(1);
 			}
 			memmove(path, *env + 5, path_len); // FIXME Replace
 			return (path);
@@ -53,7 +53,7 @@ sh_exec_path(char **argv)
 	{
 		if (execvp(argv[0], argv) == -1) // TODO Switch to execve
 			uputs("execvp failed\n");
-		clean_exit(1);
+		exit(1);
 	}
 	else if (pid < 0)
 	{

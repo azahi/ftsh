@@ -7,13 +7,6 @@
 #include "minishell.h"
 #include "prompt.h"
 
-void
-clean_exit(int code)
-{
-	lenv_deinit();
-	exit(code);
-}
-
 /**
  * Splits input into arguments.
  *
@@ -30,9 +23,7 @@ sh_split(char *line, int *linec)
 	int i = 0;
 
 	if (!(tokens = malloc(sizeof (**tokens) * bufsize)))
-	{
-		clean_exit(1);
-	}
+		exit(1);
 
 	token = strtok(line, TOK_DELIM); // FIXME Replace
 	while (token)
@@ -44,10 +35,8 @@ sh_split(char *line, int *linec)
 		{
 			bufsize += TOK_BUFSIZE;
 			if (!(tokens = realloc(tokens, sizeof (**tokens) * bufsize)))
-			{
 				// FIXME Iteratively clean tokens on failure.
-				clean_exit(1);
-			}
+				exit(1);
 		}
 		token = strtok(NULL, TOK_DELIM); // FIXME Replace
 	}
@@ -87,5 +76,5 @@ main(void)
 		free(line);
 		free(lv);
 	}
-	clean_exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

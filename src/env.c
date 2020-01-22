@@ -53,11 +53,8 @@ lenv_init(void)
 	int			i;
 
 	size = get_arr_size(environ);
-	if (!(g_env = malloc(sizeof (**g_env) * size)))
-	{
-		// TODO Clean exit
-		return ;
-	}
+	if (!(g_env = malloc(sizeof (char *) * (size + 1))))
+		exit(1);
 	i = 0;
 	while (i < size)
 	{
