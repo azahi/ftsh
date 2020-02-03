@@ -17,15 +17,10 @@
 char **
 sh_split(char *line, int *linec)
 {
-	char **tokens;
-	char *token;
 	int bufsize = TOK_BUFSIZE;
+	char **tokens = malloc(sizeof (**tokens) * bufsize);
+	char *token = strtok(line, TOK_DELIM); // FIXME Replace
 	int i = 0;
-
-	if (!(tokens = malloc(sizeof (**tokens) * bufsize)))
-		exit(1);
-
-	token = strtok(line, TOK_DELIM); // FIXME Replace
 	while (token)
 	{
 		tokens[i] = token;
@@ -53,7 +48,6 @@ sh_getline(void) // TODO get_next_line
 {
 	char *line = NULL;
 	size_t bufsize = 0;
-
 	getline(&line, &bufsize, stdin); // FIXME Replace
 	return (line);
 }
@@ -61,20 +55,14 @@ sh_getline(void) // TODO get_next_line
 int
 main(void)
 {
-	char	**lv;
-	char	*line;
-	int		lc;
-
 	lenv_init();
 	while (1)
 	{
 		prompt();
-		line = sh_getline();
-		lv = sh_split(line, &lc);
+		char *line = sh_getline();
+		int lc;
+		char **lv = sh_split(line, &lc);
 		sh_exec(lc, lv);
-
-		free(line);
-		free(lv);
 	}
 	exit(EXIT_SUCCESS);
 }

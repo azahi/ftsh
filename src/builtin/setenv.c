@@ -1,10 +1,17 @@
 #include <ft.h>
 
+#include "../env.h"
+
 int
 builtin_setenv(int argc, char **argv)
 {
-	(void)argv;
 	(void)argc;
-	uputs("Not implemented.\n");
-	return (1);
+
+	if (!argv[1])
+		return (1);
+	if (!argv[2])
+		lenv_set(argv[1], NULL);
+	lenv_set(argv[1], argv[2]);
+
+	return (0);
 }

@@ -6,17 +6,17 @@ RUN apt-get update && \
 	apt-get install -y \
 	build-essential \
 	cmake \
-	gcc \
 	--no-install-recommends && \
 	rm -rf /var/lib/apt/lists/*
 
-COPY . /usr/src/ftsh
-WORKDIR /usr/src/ftsh
+COPY . /usr/src/minishell
+WORKDIR /usr/src/minishell
 
-RUN mkdir build && \
+RUN ( [ -d build ] && rm -rf build ) && \
+	mkdir build && \
 	cd build && \
 	cmake .. && \
 	make clean && \
 	make all
 
-CMD [ "build/ftsh" ]
+CMD [ "build/minishell" ]

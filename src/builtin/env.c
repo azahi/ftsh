@@ -9,11 +9,10 @@ builtin_env(int argc, char **argv)
 	(void)argc;
 
 	char **env = g_env;
-
 	while(*env)
 	{
 		uputsn(*env);
 		env++;
 	}
-	return (1);
+	return (0);
 }

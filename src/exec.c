@@ -10,45 +10,13 @@
 #include "exec.h"
 #include "minishell.h"
 
-static char *
-getpath(void)
-{
-	char *path;
-	char **env;
-	size_t path_len;
-
-	env = g_env;
-	while (*env)
-	{
-		if (!strncmp(*env, "PATH=", 5)) // FIXME Replace
-		{
-			path_len = strlen(*env) - 5; // FIXME Replace
-			if (!(path = malloc(sizeof (*path) * path_len)))
-			{
-				// TODO Clean exit
-				exit(1);
-			}
-			memmove(path, *env + 5, path_len); // FIXME Replace
-			return (path);
-		}
-		env++;
-	}
-	return (NULL);
-}
-
 /**
  * Executes from PATH.
  */
 static int
 sh_exec_path(char **argv)
 {
-	int wstatus;
-	pid_t pid;
-
-	char *path = getpath();
-	free(path);
-
-	pid = fork();
+	pid_t pid = fork();
 	if (pid == 0)
 	{
 		if (execvp(argv[0], argv) == -1) // TODO Switch to execve
@@ -61,6 +29,7 @@ sh_exec_path(char **argv)
 	}
 	else
 	{
+		int wstatus;
 		do
 			waitpid(pid, &wstatus, WUNTRACED);
 		while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus));
@@ -68,7 +37,7 @@ sh_exec_path(char **argv)
 	return (1);
 }
 
-int
+static int
 sh_exec_builtin(int argc, char **argv)
 {
 	int i;
@@ -76,7 +45,7 @@ sh_exec_builtin(int argc, char **argv)
 	i = 0;
 	while (i < BUILTIN_COUNT)
 	{
-		if (!strcmp(argv[0], builtin_names[i])) // TODO Replace
+		if (!ft_strcmp(argv[0], builtin_names[i]))
 			return ((*builtin_func[i])(argc, argv));
 		i++;
 	}
@@ -89,10 +58,9 @@ sh_exec_builtin(int argc, char **argv)
 int
 sh_exec(int argc, char **argv)
 {
-	int status = 1;
-
 	if (!argv[0])
 		return (1);
+	int status = 1;
 	if ((status = sh_exec_builtin(argc, argv)))
 		return (status);
 	return (sh_exec_path(argv));

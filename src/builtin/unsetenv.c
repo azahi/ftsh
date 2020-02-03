@@ -1,10 +1,13 @@
 #include <ft.h>
 
+#include "../env.h"
+
 int
 builtin_unsetenv(int argc, char **argv)
 {
-	(void)argv;
-	(void)argc;
-	uputs("Not implemented.\n");
-	return (1);
+	if (argc != 2)
+		return (1);
+	lenv_unset(argv[1]);
+
+	return (0);
 }
