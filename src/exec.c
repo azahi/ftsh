@@ -4,23 +4,20 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <limits.h>
 
 #include "builtin/builtin.h"
 #include "env.h"
 #include "exec.h"
 #include "minishell.h"
 
-/**
- * Executes from PATH.
- */
 static int
-sh_exec_path(char **argv)
+exec_proc(char *file, char **argv)
 {
 	pid_t pid = fork();
 	if (pid == 0)
 	{
-		if (execvp(argv[0], argv) == -1) // TODO Switch to execve
-			uputs("execvp failed\n");
+		execve(file, argv, g_env);
 		exit(1);
 	}
 	else if (pid < 0)
@@ -34,34 +31,72 @@ sh_exec_path(char **argv)
 			waitpid(pid, &wstatus, WUNTRACED);
 		while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus));
 	}
+	return (0);
+}
+
+static int
+can_exec(char *file)
+{
+	// TODO stat(2)
 	return (1);
+}
+
+static int sh_exec_file(int argc, char **argv);
+{
+	char *file = *argv;
+
+	if (strchr(file, '/'))
+	{
+		if (can_exec(file))
+			return (exec_proc(file, argv));
+	}
+
+	size_t file_l = strnlen(file, NAME_MAX + 1);
+	if (file_l > NAME_MAX)
+		return (-1);
+
+	char *path = lenv_getenv("PATH");
+	if (!path)
+		path = "/usr/local/bin:/usr/bin:/bin";
+
+	int bufsize = TOK_BUFSIZE;
+	char **tokens = malloc(sizeof (**tokens) * bufsize);
+	char *token = strtok(path, ":"); // FIXME Replace
+	int i = 0;
+	while (token)
+	{
+		tokens[i] = token;
+		i++;
+
+		if (i >= bufsize)
+		{
+			bufsize += TOK_BUFSIZE;
+			tokens = realloc(tokens, sizeof (**tokens) * bufsize));
+		}
+		token = strtok(NULL, ":"); // FIXME Replace
+	}
+	tokens[i] = NULL;
 }
 
 static int
 sh_exec_builtin(int argc, char **argv)
 {
-	int i;
-
-	i = 0;
+	int i = 0;
 	while (i < BUILTIN_COUNT)
 	{
 		if (!ft_strcmp(argv[0], builtin_names[i]))
 			return ((*builtin_func[i])(argc, argv));
 		i++;
 	}
-	return (0);
+	return (-1);
 }
 
-/**
- * Executes a builtin if argv[0] corresponds to an element in builtin array.
- */
 int
 sh_exec(int argc, char **argv)
 {
 	if (!argv[0])
 		return (1);
-	int status = 1;
-	if ((status = sh_exec_builtin(argc, argv)))
-		return (status);
-	return (sh_exec_path(argv));
+	if (sh_exec_builtin(argc, argv) == -1)
+		return (1);
+	return (sh_exec_file(argc, argv));
 }
