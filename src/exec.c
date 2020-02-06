@@ -18,7 +18,7 @@ exec_proc(char *file, char **argv)
 	if (pid == 0)
 	{
 		execve(file, argv, g_env);
-		exit(1);
+		exit(0);
 	}
 	else if (pid < 0)
 	{
@@ -38,44 +38,45 @@ static int
 can_exec(char *file)
 {
 	// TODO stat(2)
+	(void)file;
 	return (1);
 }
 
-static int sh_exec_file(int argc, char **argv);
+static int
+sh_exec_file(char **argv) // TODO Adhere to subject
 {
-	char *file = *argv;
+	if (strchr(argv[0], '/') && can_exec(argv[0]))
+		return (exec_proc(argv[0], argv));
 
-	if (strchr(file, '/'))
-	{
-		if (can_exec(file))
-			return (exec_proc(file, argv));
-	}
-
-	size_t file_l = strnlen(file, NAME_MAX + 1);
-	if (file_l > NAME_MAX)
-		return (-1);
+	size_t k = strnlen(argv[0], NAME_MAX + 1);
+	if (k > NAME_MAX)
+		return (1);
 
 	char *path = lenv_getenv("PATH");
 	if (!path)
 		path = "/usr/local/bin:/usr/bin:/bin";
+	size_t l = strnlen(path, PATH_MAX - 1) + 1;
 
-	int bufsize = TOK_BUFSIZE;
-	char **tokens = malloc(sizeof (**tokens) * bufsize);
-	char *token = strtok(path, ":"); // FIXME Replace
-	int i = 0;
-	while (token)
+	char *file = malloc(sizeof(*file) * l);
+	*file = '\0';
+	char *elem = strtok(path, ":");
+	strcat(file, elem);
+	strcat(file, "/");
+	strcat(file, argv[0]);
+	if (can_exec(file))
+		return (exec_proc(file, argv));
+	while (elem)
 	{
-		tokens[i] = token;
-		i++;
-
-		if (i >= bufsize)
-		{
-			bufsize += TOK_BUFSIZE;
-			tokens = realloc(tokens, sizeof (**tokens) * bufsize));
-		}
-		token = strtok(NULL, ":"); // FIXME Replace
+		*file = '\0';
+		elem = strtok(NULL, ":");
+		strcat(file, elem);
+		strcat(file, "/");
+		strcat(file, argv[0]);
+		if (can_exec(file))
+			return (exec_proc(file, argv));
 	}
-	tokens[i] = NULL;
+	free(file);
+	return (1);
 }
 
 static int
@@ -96,7 +97,8 @@ sh_exec(int argc, char **argv)
 {
 	if (!argv[0])
 		return (1);
-	if (sh_exec_builtin(argc, argv) == -1)
-		return (1);
-	return (sh_exec_file(argc, argv));
+	int ret;
+	if ((ret = sh_exec_builtin(argc, argv)) != -1)
+		return (ret);
+	return (sh_exec_file(argv));
 }
