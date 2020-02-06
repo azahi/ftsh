@@ -1,10 +1,11 @@
 #include <ft.h>
 #include <ft_stdlib.h>
 #include <ft_string.h>
+#include <limits.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <limits.h>
 
 #include "builtin/builtin.h"
 #include "env.h"
@@ -22,7 +23,8 @@ exec_proc(char *file, char **argv)
 	}
 	else if (pid < 0)
 	{
-		uputs("PID < 0\n");
+		uputs("minishell: failed to create a new process.\n");
+		return (1);
 	}
 	else
 	{
@@ -37,9 +39,11 @@ exec_proc(char *file, char **argv)
 static int
 can_exec(char *file)
 {
-	// TODO stat(2)
-	(void)file;
-	return (1);
+	struct stat st;
+	if (!stat(file, &st))
+		if (st.st_mode & S_IXUSR)
+			return (1);
+	return (0);
 }
 
 static int
@@ -76,6 +80,7 @@ sh_exec_file(char **argv) // TODO Adhere to subject
 			return (exec_proc(file, argv));
 	}
 	free(file);
+	uputs("minishell: command not found.\n");
 	return (1);
 }
 
