@@ -78,6 +78,7 @@ lenv_set(char *key, char *val)
 	strcat(var, "=");
 	strcat(var, val);
 	g_env[size - 1] = var;
+	free(var);
 	g_env[size] = NULL;
 }
 

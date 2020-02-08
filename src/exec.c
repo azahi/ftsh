@@ -41,8 +41,10 @@ can_exec(char *file)
 {
 	struct stat st;
 	if (!stat(file, &st))
+	{
 		if (st.st_mode & S_IXUSR)
 			return (1);
+	}
 	return (0);
 }
 
@@ -59,27 +61,27 @@ sh_exec_file(char **argv) // TODO Adhere to subject
 	char *path = lenv_getenv("PATH");
 	if (!path)
 		path = "/usr/local/bin:/usr/bin:/bin";
-	size_t l = strnlen(path, PATH_MAX - 1) + 1;
+	size_t l = strlen(path);
 
-	char *file = malloc(sizeof(*file) * l);
-	*file = '\0';
-	char *elem = strtok(path, ":");
-	strcat(file, elem);
-	strcat(file, "/");
-	strcat(file, argv[0]);
-	if (can_exec(file))
-		return (exec_proc(file, argv));
-	while (elem)
+	const char *p = path, *z;
+	while (1)
 	{
-		*file = '\0';
-		elem = strtok(NULL, ":");
-		strcat(file, elem);
-		strcat(file, "/");
-		strcat(file, argv[0]);
-		if (can_exec(file))
-			return (exec_proc(file, argv));
+		char b[l + k + 1];
+		z = ft_strchrnul(p, ':');
+		if (z - p >= (long)l) {
+			if (!*z++)
+				break;
+			continue;
+		}
+		memcpy(b, p, z - p);
+		b[z - p] = '/';
+		memcpy(b + (z - p) + (z > p), argv[0], k + 1);
+		if (can_exec(b))
+			return (exec_proc(b, argv));
+		if (!*z++)
+			break;
+		p = z;
 	}
-	free(file);
 	uputs("minishell: command not found.\n");
 	return (1);
 }
