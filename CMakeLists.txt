@@ -1,15 +1,18 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.1...3.16)
 
-project(minishell C)
+if (${CMAKE_VERSION} VERSION_LESS 3.12)
+        cmake_policy(VERSION {CMAKE_MAJOR_VERSION.${CMAKE_MINOR_VERSION}})
+endif()
+
+project(minishell
+        VERSION 0.1
+        LANGUAGES C)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra")
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(lib/libft)
-
-include_directories(
-        lib/libft/include)
 
 add_executable(minishell
         src/builtin/cd.c
@@ -22,5 +25,5 @@ add_executable(minishell
         src/exec.c
         src/main.c
         src/prompt.c)
-
-target_link_libraries(minishell ft)
+target_link_libraries(minishell
+        PUBLIC ft)
