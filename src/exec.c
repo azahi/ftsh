@@ -23,7 +23,7 @@ exec_proc(char *file, char **argv)
 	}
 	else if (pid < 0)
 	{
-		uputs("minishell: failed to create a new process.\n");
+		ufputs("minishell: failed to create a new process.\n", 2);
 		return (1);
 	}
 	else
@@ -66,7 +66,7 @@ sh_exec_file(char **argv) // TODO Adhere to subject
 	const char *p = path, *z;
 	while (1)
 	{
-		char b[l + k + 1];
+		char b[l + k + 1]; /* Not norm-like */
 		z = ft_strchrnul(p, ':');
 		if (z - p >= (long)l) {
 			if (!*z++)
@@ -82,7 +82,7 @@ sh_exec_file(char **argv) // TODO Adhere to subject
 			break;
 		p = z;
 	}
-	uputs("minishell: command not found.\n");
+	ufputs("minishell: command not found.\n", 2);
 	return (1);
 }
 

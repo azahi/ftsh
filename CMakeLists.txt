@@ -12,6 +12,12 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra")
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+option(DEBUG OFF)
+if (DEBUG)
+        add_definitions(-DDEBUG)
+        set(CMAKE_BUILD_TYPE Debug)
+endif(DEBUG)
+
 add_subdirectory(lib/libft)
 
 add_executable(minishell
