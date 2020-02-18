@@ -64,11 +64,16 @@ lenv_set(char *key, char *val)
 {
 	size_t ks = strlen(key);
 	size_t vs = strlen(val);
-#ifdef DEBUG
-	fprintf(stderr, "DEBUG: ks = %lu, vs = %lu\n", ks, vs);
-#endif
 	char *var = calloc(1, sizeof (*var) * (ks + 1 + vs));
 	memcpy(var, key, ks);
+	var[ks] = '=';
+	memcpy(var + ks + 1, val, vs);
+	var[ks + 1 + vs] = '\0';
+	int size = arr_size(g_env) + 1;
+	if (!(g_env = realloc(g_env, sizeof (*g_env) * size)))
+		exit(1);
+	g_env[size - 1] = var;
+	g_env[size] = NULL;
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: lenv_set(\"%s\", \"%s\"): var = \"%s\"\n", key, val, var);
 #endif
