@@ -33,7 +33,8 @@ lenv_getenv(const char *name)
 			if (!ft_strncmp(name, *env, l) && l[*env] == '=')
 			{
 #ifdef DEBUG
-				fprintf(stderr, "lenv_getenv(\"%s\"): \"%s\"\n", name, *env + l + 1);
+				fprintf(stderr, "DEBUG: lenv_getenv(\"%s\"): \"%s\"\n",
+						name, *env + l + 1);
 #endif
 				return (*env + l + 1);
 			}
@@ -41,7 +42,7 @@ lenv_getenv(const char *name)
 		}
 	}
 #ifdef DEBUG
-	fprintf(stderr, "lenv_getenv(\"%s\"): NULL\n", name);
+	fprintf(stderr, "DEBUG: lenv_getenv(\"%s\"): (null)\n", name);
 #endif
 	return (NULL);
 }
@@ -61,8 +62,16 @@ lenv_unset(char *key)
 void
 lenv_set(char *key, char *val)
 {
-	(void)key;
-	(void)val;
+	size_t ks = strlen(key);
+	size_t vs = strlen(val);
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: ks = %lu, vs = %lu\n", ks, vs);
+#endif
+	char *var = calloc(1, sizeof (*var) * (ks + 1 + vs));
+	memcpy(var, key, ks);
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: lenv_set(\"%s\", \"%s\"): var = \"%s\"\n", key, val, var);
+#endif
 }
 
 /**
@@ -86,6 +95,10 @@ lenv_init(void)
 		i++;
 	}
 	g_env[size] = NULL;
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: lenv_init(): [0] = \"%s\" [%d] = \"%s\" [%d] = \"%s\"\n",
+			g_env[0], size - 1, g_env[size - 1], size, g_env[size]);
+#endif
 }
 
 /**
@@ -101,4 +114,7 @@ lenv_deinit(void)
 		env++;
 	}
 	free(g_env);
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: lenv_deinit(): OK\n");
+#endif
 }

@@ -21,12 +21,9 @@
 char **
 sh_split(char *line, int *linec)
 {
-#ifdef DEBUG
-	fprintf(stderr, ">> sh_split(\"%.*s\") <<\n", (int)strlen(line) - 1, line);
-#endif
-	int bufsize = TOK_BUFSIZE + 1;
-	char **tokens = malloc(sizeof (**tokens) * bufsize);
-	char *token = strtok(line, TOK_DELIM); // FIXME Replace
+	int bufsize = 1;
+	char **tokens = malloc(sizeof (*tokens) * bufsize);
+	char *token = ft_strtok(line, TOK_DELIM);
 	int i = 0;
 	while (token)
 	{
@@ -35,21 +32,22 @@ sh_split(char *line, int *linec)
 
 		if (i >= bufsize)
 		{
-			bufsize += TOK_BUFSIZE + 1;
-			if (!(tokens = realloc(tokens, sizeof (**tokens) * bufsize)))
-				// FIXME Iteratively clean tokens on failure.
+			bufsize += 1;
+			if (!(tokens = realloc(tokens, sizeof (*tokens) * bufsize)))
 				exit(1);
 		}
-		token = strtok(NULL, TOK_DELIM); // FIXME Replace
+		token = ft_strtok(NULL, TOK_DELIM);
 	}
-	tokens[i] = NULL; // FIXME Valgrind
+	tokens[i] = NULL;
 	*linec = i;
+/*
 #ifdef DEBUG
-	fprintf(stderr, "<< sh_split():");
+	fprintf(stderr, "DEBUG: sh_split():");
 	for (int j = 0; j <= i; j++)
 		fprintf(stderr, " [%d] = \"%s\"", j, tokens[j]);
-	fprintf(stderr, " (linec = %d) >>\n", *linec);
+	fprintf(stderr, " (linec = %d)\n", *linec);
 #endif
+*/
 	return (tokens);
 }
 
@@ -62,6 +60,9 @@ sh_getline(void) // TODO get_next_line
 	char *line = NULL;
 	size_t bufsize = 0;
 	getline(&line, &bufsize, stdin); // FIXME Replace
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: sh_getline(): \"%.*s\"\n", (int)strlen(line) - 1, line);
+#endif
 	return (line);
 }
 
@@ -75,8 +76,13 @@ main(void)
 		char *line = sh_getline();
 		int lc;
 		char **lv = sh_split(line, &lc);
-		sh_exec(lc, lv);
+		int status = sh_exec(lc, lv);
 		free(lv);
 		free(line);
+		if (status == -10)
+		{
+			lenv_deinit();
+			return (0);
+		}
 	}
 }

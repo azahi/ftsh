@@ -7,6 +7,10 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#ifdef DEBUG
+#include <stdio.h>
+#endif
+
 #include "builtin/builtin.h"
 #include "env.h"
 #include "exec.h"
@@ -93,7 +97,15 @@ sh_exec_builtin(int argc, char **argv)
 	while (i < BUILTIN_COUNT)
 	{
 		if (!ft_strcmp(argv[0], builtin_names[i]))
+		{
+#ifdef DEBUG
+			fprintf(stderr, "sh_exec_builtin(%d", argc);
+			for (int j = 0; j < argc; j++)
+				fprintf(stderr, ", \"%s\"", argv[j]);
+			fprintf(stderr, "): %p => OK\n", *(builtin_func)[i]);
+#endif
 			return ((*builtin_func[i])(argc, argv));
+		}
 		i++;
 	}
 	return (-1);
