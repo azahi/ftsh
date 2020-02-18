@@ -59,7 +59,8 @@ sh_getline(void) // TODO get_next_line
 {
 	char *line = NULL;
 	size_t bufsize = 0;
-	getline(&line, &bufsize, stdin); // FIXME Replace
+	if (!getline(&line, &bufsize, stdin)) // FIXME Replace
+		return (NULL);
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: sh_getline(): \"%.*s\"\n", (int)strlen(line) - 1, line);
 #endif

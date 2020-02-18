@@ -1,22 +1,17 @@
-FROM debian:bullseye-slim
+FROM alpine:3.11.3
 
 LABEL maintainer "Azat Bahawi <azahi@teknik.io>"
 
-RUN apt-get update && \
-	apt-get install -y \
-	build-essential \
-	cmake \
-	--no-install-recommends && \
-	rm -rf /var/lib/apt/lists/*
+RUN apk -U upgrade \
+ && apk add build-base cmake
 
-COPY . /usr/src/minishell
-WORKDIR /usr/src/minishell
+COPY . /tmp/minishell
 
-RUN ( [ -d build ] && rm -rf build ) && \
-	mkdir build && \
-	cd build && \
-	cmake .. && \
-	make clean && \
-	make all
+RUN cmake -S /tmp/minishell -B /tmp/minishell -DCMAKE_BUILD_TYPE=Release \
+ && cmake --build /tmp/minishell --target all -j $(getconf _NPROCESSORS_CONF) --target all \
+ && strip -s /tmp/minishell/minishell \
+ && cp /tmp/minishell/minishell /bin \
+ && apk del build-base cmake \
+ && rm -rf /var/cache/apk/*
 
-CMD [ "build/minishell" ]
+CMD [ "minishell" ]

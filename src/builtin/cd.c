@@ -15,12 +15,17 @@ builtin_cd(int argc, char **argv)
 {
 	(void)argc;
 
+	char *target = argv[1];
 	char buf[PATH_MAX];
-	getcwd(buf, sizeof(buf));
+	if (!getcwd(buf, sizeof(buf)))
+	{
+		uputs("cd: error: ");
+		uputsn(target);
+		return (1);
+	}
 	static char *prev_dir;
 	if (!prev_dir)
 		prev_dir = strdup(buf);
-	char *target = argv[1];
 	if (argv[1])
 	{
 		if (*argv[1] == '$')
