@@ -1,5 +1,5 @@
-#ifndef ENV_H
-#define ENV_H
+#ifndef __ENV_H__
+#define __ENV_H__
 
 char **g_env;
 
@@ -11,4 +11,4 @@ void lenv_unset(char *key);
 void lenv_init(void);
 void lenv_deinit(void);
 
-#endif
+#endif /* !__ENV_H__ */

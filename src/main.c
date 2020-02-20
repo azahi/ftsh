@@ -1,13 +1,13 @@
 #include <ft_stdlib.h>
 #include <ft_string.h>
-#include <stdio.h> /* getline() */
 
 #ifdef DEBUG
 #include <stdio.h>
-#endif
+#endif /* !DEBUG */
 
 #include "env.h"
 #include "exec.h"
+#include "gl.h"
 #include "minishell.h"
 #include "prompt.h"
 
@@ -40,14 +40,12 @@ sh_split(char *line, int *linec)
 	}
 	tokens[i] = NULL;
 	*linec = i;
-/*
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: sh_split():");
 	for (int j = 0; j <= i; j++)
 		fprintf(stderr, " [%d] = \"%s\"", j, tokens[j]);
 	fprintf(stderr, " (linec = %d)\n", *linec);
-#endif
-*/
+#endif /* !DEBUG */
 	return (tokens);
 }
 
@@ -55,15 +53,11 @@ sh_split(char *line, int *linec)
  * Reads a line from input.
  */
 static char *
-sh_getline(void) // TODO get_next_line
+sh_getline(void)
 {
 	char *line = NULL;
-	size_t bufsize = 0;
-	if (!getline(&line, &bufsize, stdin)) // FIXME Replace
+	if (gl(0, &line) != 1)
 		return (NULL);
-#ifdef DEBUG
-	fprintf(stderr, "DEBUG: sh_getline(): \"%.*s\"\n", (int)strlen(line) - 1, line);
-#endif
 	return (line);
 }
 
@@ -75,8 +69,19 @@ main(void)
 	{
 		prompt();
 		char *line = sh_getline();
+		if (!line)
+		{
+			lenv_deinit();
+			return (1);
+		}
 		int lc;
 		char **lv = sh_split(line, &lc);
+		if (!lv)
+		{
+			free(line);
+			lenv_deinit();
+			return (1);
+		}
 		int status = sh_exec(lc, lv);
 		free(lv);
 		free(line);

@@ -29,6 +29,7 @@ add_executable(minishell
         src/builtin/unsetenv.c
         src/env.c
         src/exec.c
+        src/gl.c
         src/main.c
         src/prompt.c)
 target_link_libraries(minishell

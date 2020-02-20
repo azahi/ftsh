@@ -9,7 +9,7 @@
 
 #ifdef DEBUG
 #include <stdio.h>
-#endif
+#endif /* !DEBUG */
 
 #include "builtin/builtin.h"
 #include "env.h"
@@ -53,7 +53,7 @@ can_exec(char *file)
 }
 
 static int
-sh_exec_file(char **argv) // TODO Adhere to subject
+sh_exec_file(char **argv)
 {
 	if (strchr(argv[0], '/') && can_exec(argv[0]))
 		return (exec_proc(argv[0], argv));
@@ -103,7 +103,7 @@ sh_exec_builtin(int argc, char **argv)
 			for (int j = 0; j < argc; j++)
 				fprintf(stderr, ", \"%s\"", argv[j]);
 			fprintf(stderr, "): %p => OK\n", *(builtin_func)[i]);
-#endif
+#endif /* !DEBUG */
 			return ((*builtin_func[i])(argc, argv));
 		}
 		i++;

@@ -4,7 +4,7 @@
 
 #ifdef DEBUG
 #include <stdio.h>
-#endif
+#endif /* !DEBUG */
 
 #include "env.h"
 
@@ -35,7 +35,7 @@ lenv_getenv(const char *name)
 #ifdef DEBUG
 				fprintf(stderr, "DEBUG: lenv_getenv(\"%s\"): \"%s\"\n",
 						name, *env + l + 1);
-#endif
+#endif /* !DEBUG */
 				return (*env + l + 1);
 			}
 			env++;
@@ -43,7 +43,7 @@ lenv_getenv(const char *name)
 	}
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: lenv_getenv(\"%s\"): (null)\n", name);
-#endif
+#endif /* !DEBUG */
 	return (NULL);
 }
 
@@ -53,7 +53,40 @@ lenv_getenv(const char *name)
 void
 lenv_unset(char *key)
 {
-	(void)key;
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: lenv_unset(\"%s\")\n", key);
+#endif /* !DEBUG */
+	int size = arr_size(g_env);
+	int i = 0;
+	while (i <= size)
+	{
+		size_t ks = ft_strlen(key);
+		if (!ft_strncmp(key, g_env[i], ks) && g_env[i][ks] == '=')
+			break;
+		i++;
+	}
+	if (i == size)
+		return;
+	char **env = malloc(sizeof (*env) * (size - 1));
+	int j = 0;
+	while (j < size)
+	{
+		if (j != i)
+			env[j] = g_env[j];
+#ifdef DEBUG
+		else
+			fprintf(stderr, "DEBUG: g_env[%d] = \"%s\": SKIPPED\n", j, g_env[j]);
+#endif /* !DEBUG */
+		j++;
+	}
+	size = j;
+	env[size] = NULL;
+	free(g_env);
+	g_env = env;
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: g_env: [0] = \"%s\" [%d] = \"%s\" [%d] = \"%s\"\n",
+			g_env[0], size - 1, g_env[size - 1], size, g_env[size]);
+#endif /* !DEBUG */
 }
 
 /**
@@ -76,7 +109,9 @@ lenv_set(char *key, char *val)
 	g_env[size] = NULL;
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: lenv_set(\"%s\", \"%s\"): var = \"%s\"\n", key, val, var);
-#endif
+	fprintf(stderr, "DEBUG: g_env: [0] = \"%s\" [%d] = \"%s\" [%d] = \"%s\"\n",
+			g_env[0], size - 1, g_env[size - 1], size, g_env[size]);
+#endif /* !DEBUG */
 }
 
 /**
@@ -92,7 +127,7 @@ lenv_init(void)
 	extern char	**environ;
 	int size = arr_size(environ);
 	if (!(g_env = malloc(sizeof (char *) * (size + 1))))
-		exit(EXIT_FAILURE);
+		exit(1);
 	int i = 0;
 	while (i < size)
 	{
@@ -103,7 +138,7 @@ lenv_init(void)
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: lenv_init(): [0] = \"%s\" [%d] = \"%s\" [%d] = \"%s\"\n",
 			g_env[0], size - 1, g_env[size - 1], size, g_env[size]);
-#endif
+#endif /* !DEBUG */
 }
 
 /**
@@ -121,5 +156,5 @@ lenv_deinit(void)
 	free(g_env);
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: lenv_deinit(): OK\n");
-#endif
+#endif /* !DEBUG */
 }

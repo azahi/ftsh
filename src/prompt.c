@@ -3,16 +3,19 @@
 #include <limits.h>
 #include <unistd.h>
 
-#ifdef DEBUG
-#include <stdio.h>
-#endif
-
 #include "env.h"
 #include "prompt.h"
 
 /**
  * Display a prompt message.
  */
+#ifdef DEBUG
+void
+prompt(void)
+{
+	uputs("> ");
+}
+#else
 void
 prompt(void)
 {
@@ -29,3 +32,4 @@ prompt(void)
 		uputs(cwd);
 	uputs(" $ ");
 }
+#endif /* !DEBUG */
