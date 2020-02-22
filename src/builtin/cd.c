@@ -28,8 +28,6 @@ builtin_cd(int argc, char **argv)
 		prev_dir = strdup(buf);
 	if (argv[1])
 	{
-		if (*argv[1] == '$')
-			target = lenv_getenv(argv[1] + 1);
 		if (!strcmp(target, "-"))
 		{
 			uputsn(prev_dir);

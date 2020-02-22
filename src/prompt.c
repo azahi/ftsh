@@ -13,7 +13,7 @@
 void
 prompt(void)
 {
-	uputs("> ");
+	ufputs(FT_STDOUT, "> ");
 }
 #else
 void
@@ -25,11 +25,11 @@ prompt(void)
 	size_t home_l = ft_strlen(home);
 	if (!ft_strncmp(cwd, home, home_l))
 	{
-		uputc('~');
-		uputs(cwd + home_l);
+		ufputc(FT_STDOUT, '~');
+		ufputs(FT_STDOUT, cwd + home_l);
 	}
 	else
-		uputs(cwd);
-	uputs(" $ ");
+		ufputs(FT_STDOUT, cwd);
+	ufputs(FT_STDOUT, " $ ");
 }
 #endif /* !DEBUG */

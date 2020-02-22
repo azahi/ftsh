@@ -27,7 +27,7 @@ exec_proc(char *file, char **argv)
 	}
 	else if (pid < 0)
 	{
-		ufputs("minishell: failed to create a new process.\n", 2);
+		ufputs(FT_STDERR, "minishell: failed to create a new process.\n");
 		return (1);
 	}
 	else
@@ -86,7 +86,7 @@ sh_exec_file(char **argv)
 			break;
 		p = z;
 	}
-	ufputs("minishell: command not found.\n", 2);
+	ufputs(FT_STDERR, "minishell: command not found.\n");
 	return (1);
 }
 

@@ -21,22 +21,26 @@
 char **
 sh_split(char *line, int *linec)
 {
-	int bufsize = 1;
+	int bufsize = MINISHELL_INPUT_BUFSIZE;
 	char **tokens = malloc(sizeof (*tokens) * bufsize);
-	char *token = ft_strtok(line, TOK_DELIM);
+	char *token = ft_strtok(line, MINISHELL_INPUT_DELIMITERS);
 	int i = 0;
 	while (token)
 	{
 		tokens[i] = token;
 		i++;
-
 		if (i >= bufsize)
 		{
-			bufsize += 1;
-			if (!(tokens = realloc(tokens, sizeof (*tokens) * bufsize)))
+			char **t;
+			bufsize += MINISHELL_INPUT_BUFSIZE;
+			if (!(t = malloc(sizeof (*t) * bufsize)))
 				exit(1);
+			for (int j = 0; j < bufsize - MINISHELL_INPUT_BUFSIZE; j++)
+				t[j] = tokens[j];
+			free(tokens);
+			tokens = t;
 		}
-		token = ft_strtok(NULL, TOK_DELIM);
+		token = ft_strtok(NULL, MINISHELL_INPUT_DELIMITERS);
 	}
 	tokens[i] = NULL;
 	*linec = i;
@@ -49,27 +53,17 @@ sh_split(char *line, int *linec)
 	return (tokens);
 }
 
-/**
- * Reads a line from input.
- */
-static char *
-sh_getline(void)
-{
-	char *line = NULL;
-	if (gl(0, &line) != 1)
-		return (NULL);
-	return (line);
-}
-
 int
-main(void)
+main(int argc, char **argv)
 {
+	(void)argc;
+	(void)argv;
 	lenv_init();
 	while (1)
 	{
 		prompt();
-		char *line = sh_getline();
-		if (!line)
+		char *line = NULL;
+		if (gl(FT_STDOUT, &line) != 1)
 		{
 			lenv_deinit();
 			return (1);

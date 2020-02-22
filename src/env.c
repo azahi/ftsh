@@ -31,9 +31,12 @@ env_rm_add(char *old, char *new)
 	}
 	if (!new)
 		return;
-	char **t = realloc(env_alloced, sizeof (*t) * (env_alloced_n + 1));
-	if (!t)
+	char **t;
+	if (!(t = malloc(sizeof (*t) * (env_alloced_n + 1))))
 		return;
+	for (size_t j = 0; j < env_alloced_n; j++)
+		t[j] = env_alloced[j];
+	free(env_alloced);
 	(env_alloced = t)[env_alloced_n++] = new;
 }
 
@@ -61,7 +64,10 @@ env_putenv(char *s, size_t l, char *r)
 	char **newenv;
 	if (g_env == oldenv)
 	{
-		newenv = realloc(oldenv, sizeof (*newenv) * (i+2));
+		newenv = malloc(sizeof (*newenv) * (i + 2));
+		for (size_t j = 0; j < (i + 2); j++)
+			newenv[j] = oldenv[j];
+		free(oldenv);
 		if (!newenv)
 		{
 			free(r);
