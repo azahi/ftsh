@@ -4,10 +4,6 @@
 #include <limits.h>
 #include <unistd.h>
 
-#ifdef DEBUG
-#include <stdio.h>
-#endif
-
 #include "../env.h"
 
 int

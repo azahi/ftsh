@@ -1,9 +1,5 @@
 #include <ft.h>
 
-#ifdef DEBUG
-#include <stdio.h>
-#endif
-
 #include "../env.h"
 
 int

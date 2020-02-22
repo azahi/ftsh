@@ -1,5 +1,5 @@
-#ifndef BUILTIN_H
-#define BUILTIN_H
+#ifndef __BUILTIN_H__
+#define __BUILTIN_H__
 
 #define BUILTIN_COUNT 6
 
@@ -28,4 +28,4 @@ int (*builtin_func[])(int, char **) = {
 	&builtin_unsetenv
 };
 
-#endif /* BUILTIN_H */
+#endif /* !__BUILTIN_H__ */
