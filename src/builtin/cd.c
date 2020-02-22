@@ -25,12 +25,12 @@ builtin_cd(int argc, char **argv)
 	}
 	static char *prev_dir;
 	if (!prev_dir)
-		prev_dir = strdup(buf);
+		prev_dir = ft_strdup(buf);
 	if (argv[1])
 	{
-		if (!strcmp(target, "-"))
+		if (!ft_strcmp(target, "-"))
 		{
-			uputsn(prev_dir);
+			ufputsn(FT_STDERR, prev_dir);
 			target = prev_dir;
 		}
 	}
@@ -38,13 +38,13 @@ builtin_cd(int argc, char **argv)
 		target = lenv_getenv("HOME");
 	if (chdir(target) == -1)
 	{
-		uputs("cd: error: ");
-		uputsn(target);
+		ufputs(FT_STDERR, "cd: error: ");
+		ufputsn(FT_STDERR, target);
 		return (1);
 	}
-	//lenv_set("PWD", buf);
-	//lenv_set("OLDPWD", prev_dir);
+	lenv_set("PWD", buf);
+	lenv_set("OLDPWD", prev_dir);
 	free(prev_dir);
-	prev_dir = strdup(buf);
+	prev_dir = ft_strdup(buf);
 	return (0);
 }

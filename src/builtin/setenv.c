@@ -9,12 +9,8 @@
 int
 builtin_setenv(int argc, char **argv)
 {
-	(void)argc;
-
-	if (!argv[1])
+	if (argc != 3)
 		return (1);
-	if (!argv[2])
-		lenv_set(argv[1], NULL);
 	lenv_set(argv[1], argv[2]);
 
 	return (0);

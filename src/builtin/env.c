@@ -9,13 +9,13 @@
 int
 builtin_env(int argc, char **argv)
 {
-	(void)argv;
 	(void)argc;
+	(void)argv;
 
 	char **env = g_env;
 	while(*env)
 	{
-		uputsn(*env);
+		ufputsn(FT_STDOUT, *env);
 		env++;
 	}
 	return (0);
