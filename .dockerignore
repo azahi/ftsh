@@ -1,6 +1,10 @@
+*.a
+*.ccls-cache
+*.idea/
 *.md
-*.sh
+*.o
+*.vscode/
 .*
 LICENSE
-build
-doc
+build/
+doc/
