@@ -86,7 +86,8 @@ sh_exec_file(char **argv)
 			break;
 		p = z;
 	}
-	ufputs(FT_STDERR, "minishell: command not found.\n");
+	ufputs(FT_STDERR, "minishell: command not found: ");
+	ufputsn(FT_STDERR, argv[0]);
 	return (1);
 }
 
