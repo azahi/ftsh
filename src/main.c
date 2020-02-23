@@ -1,3 +1,4 @@
+#include <ft.h>
 #include <ft_stdlib.h>
 #include <ft_string.h>
 
@@ -7,7 +8,6 @@
 
 #include "env.h"
 #include "exec.h"
-#include "gl.h"
 #include "minishell.h"
 #include "prompt.h"
 
@@ -63,7 +63,7 @@ main(int argc, char **argv)
 	{
 		prompt();
 		char *line = NULL;
-		if (gl(FT_STDOUT, &line) != 1)
+		if (ugetline(FT_STDIN, &line) != 1)
 		{
 			lenv_deinit();
 			return (1);
