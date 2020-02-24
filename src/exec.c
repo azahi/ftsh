@@ -60,7 +60,7 @@ can_exec(char *file)
 static int
 sh_exec_file(char **argv)
 {
-	if (strchr(argv[0], '/') && can_exec(argv[0]))
+	if (ft_strchr(argv[0], '/') && can_exec(argv[0]))
 		return (exec_proc(argv[0], argv));
 
 	size_t k = ft_strnlen(argv[0], NAME_MAX + 1);
@@ -82,9 +82,9 @@ sh_exec_file(char **argv)
 				break;
 			continue;
 		}
-		memcpy(b, p, z - p);
+		ft_memcpy(b, p, z - p);
 		b[z - p] = '/';
-		memcpy(b + (z - p) + (z > p), argv[0], k + 1);
+		ft_memcpy(b + (z - p) + (z > p), argv[0], k + 1);
 		if (can_exec(b))
 			return (exec_proc(b, argv));
 		if (!*z++)
