@@ -19,7 +19,6 @@
 #include "builtin/builtin.h"
 #include "env.h"
 #include "exec.h"
-#include "minishell.h"
 
 static int
 exec_proc(char *file, char **argv)
