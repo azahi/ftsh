@@ -1,20 +1,29 @@
 #include <ft.h>
 #include <ft_string.h>
+#include <ft_unistd.h>
+
+#define BUILTIN_ECHO_OPTS "n"
 
 int
 builtin_echo(int argc, char **argv)
 {
-	(void)argc;
 	int nonl = 0;
-	if (!ft_strcmp(argv[1], "-n"))
-		nonl = 1;
-	while (*argv)
+	if (argc > 1)
 	{
-		uputs(*argv);
-		uputc(' ');
 		argv++;
+		if (!ft_strcmp(*argv, "-n"))
+		{
+			nonl = 1;
+			argv++;
+		}
+		while (*argv)
+		{
+			ufputs(FT_STDOUT, *argv);
+			ufputc(FT_STDOUT, ' ');
+			argv++;
+		}
 	}
-	if (nonl)
-		uputc('\n');
+	if (!nonl)
+		ufputc(FT_STDOUT, '\n');
 	return (0);
 }
