@@ -64,9 +64,9 @@ print_version(void)
 	ufputs(FT_STDOUT,
 			"License WTFPL: version 2 or later <http://www.wtfpl.net/txt/copying/>\n");
 	ufputc(FT_STDOUT, '\n');
-	ufputs(FT_STDOUT, "This is software; ");
+	ufputs(FT_STDOUT, "This is non-free software; ");
 	ufputs(FT_STDOUT, "you are free to do whatever the fuck you want to do.\n");
-	ufputs(FT_STDOUT, "There is NO FUCKS GIVER ABOUT WARRANITY, ");
+	ufputs(FT_STDOUT, "There is NO FUCKS GIVEN ABOUT WARRANITY, ");
 	ufputs(FT_STDOUT, "to the extent permitted by law.\n");
 	ufputc(FT_STDOUT, '\n');
 	ufputs(FT_STDOUT, "Written by jdeathlo and pparalax.\n");
