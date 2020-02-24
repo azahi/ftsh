@@ -1,7 +1,16 @@
+#ifdef __linux__
+#define _GNU_SOURCE /* gethostname(2) */
+#endif /* !_GNU_SOURCE */
+
 #include <ft.h>
 #include <ft_string.h>
+#include <ft_unistd.h>
+
+#ifdef __linux__
+#include <linux/limits.h>
+#else
 #include <limits.h>
-#include <unistd.h>
+#endif
 
 #include "env.h"
 #include "prompt.h"
@@ -43,3 +52,7 @@ prompt(void)
 	ufputs(FT_STDOUT, " $ ");
 }
 #endif /* !DEBUG */
+
+#ifdef _GNU_SOURCE
+#undef _GNU_SOURCE
+#endif /* !_GNU_SOURCE */

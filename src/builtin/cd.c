@@ -1,8 +1,13 @@
 #include <ft.h>
 #include <ft_stdlib.h>
 #include <ft_string.h>
+#include <ft_unistd.h>
+
+#ifdef __linux__
+#include <linux/limits.h>
+#else
 #include <limits.h>
-#include <unistd.h>
+#endif
 
 #include "../env.h"
 

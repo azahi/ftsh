@@ -5,9 +5,16 @@ int
 builtin_echo(int argc, char **argv)
 {
 	(void)argc;
-	(void)argv;
-
-	ufputs(FT_STDERR, "echo: not implemented.\n");
-
+	int nonl = 0;
+	if (!ft_strcmp(argv[1], "-n"))
+		nonl = 1;
+	while (*argv)
+	{
+		uputs(*argv);
+		uputc(' ');
+		argv++;
+	}
+	if (nonl)
+		uputc('\n');
 	return (0);
 }

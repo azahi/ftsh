@@ -6,30 +6,57 @@
 #    By: jdeathlo <jdeathlo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/09/03 19:48:19 by jdeathlo          #+#    #+#              #
-#    Updated: 2020/02/23 13:32:17 by jdeathlo         ###   ########.fr        #
+#    Updated: 2020/02/24 21:06:46 by jdeathlo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-#
-# Why? Because I don't like 42's restrictions on how to build projects. >:-(
-#
+NAME = minishell
 
-TARGET := minishell
-BUILD_DIR := build
+CFLAGS = -std=c99 -Wall -Werror -Wextra
 
-$(TARGET):
-	@cmake -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release
-	@cmake --build $(BUILD_DIR) --target all
-	@cp build/$(TARGET) $(TARGET)
+INCLUDE = lib/libft/include/
 
-all: $(TARGET)
+LIBFT_PATH = lib/libft
+LIBFT_FLAG = -lft
+
+SRC =
+SRCDIR = src/
+
+_SRC = \
+	builtin/cd.c \
+	builtin/echo.c \
+	builtin/env.c \
+	builtin/exit.c \
+	builtin/setenv.c \
+	builtin/unsetenv.c \
+	env.c \
+	exec.c \
+	main.c \
+	prompt.c
+SRC += $(addprefix $(SRCDIR), $(_SRC))
+
+OBJ = $(SRC:.c=.o)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -I $(INCLUDE) -o $@ -c $<
+
+$(NAME): $(OBJ)
+	$(CC) $^ -L $(LIBFT_PATH) $(LIBFT_FLAG) -o $(NAME)
+
+all: $(NAME)
 
 clean:
-	@$(RM) -rf build
+	$(RM) $(OBJ)
 
 fclean: clean
-	@$(RM) $(TARGET)
+	$(RM) $(NAME)
 
 re: fclean all
 
-.PHONY: all clean fclean re
+docker-build:
+	docker build -t $(NAME) .
+
+docker-run:
+	docker run --interactive --tty --rm $(NAME)
+
+.PHONY: all clean fclean re docker-build docker-run

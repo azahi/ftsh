@@ -1,11 +1,16 @@
 #include <ft.h>
 #include <ft_stdlib.h>
 #include <ft_string.h>
-#include <limits.h>
+#include <ft_unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <unistd.h>
+
+#ifdef __linux__
+#include <linux/limits.h>
+#else
+#include <limits.h>
+#endif
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -58,14 +63,14 @@ sh_exec_file(char **argv)
 	if (strchr(argv[0], '/') && can_exec(argv[0]))
 		return (exec_proc(argv[0], argv));
 
-	size_t k = strnlen(argv[0], NAME_MAX + 1);
+	size_t k = ft_strnlen(argv[0], NAME_MAX + 1);
 	if (k > NAME_MAX)
 		return (1);
 
 	char *path = lenv_getenv("PATH");
 	if (!path)
 		path = "/usr/local/bin:/usr/bin:/bin";
-	size_t l = strlen(path);
+	size_t l = ft_strlen(path);
 
 	const char *p = path, *z;
 	while (1)
