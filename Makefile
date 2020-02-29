@@ -6,7 +6,7 @@
 #    By: jdeathlo <jdeathlo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/09/03 19:48:19 by jdeathlo          #+#    #+#              #
-#    Updated: 2020/02/24 21:06:46 by jdeathlo         ###   ########.fr        #
+#    Updated: 2020/02/29 15:50:10 by jdeathlo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,8 +16,10 @@ CFLAGS = -std=c99 -Wall -Werror -Wextra
 
 INCLUDE = lib/libft/include/
 
-LIBFT_PATH = lib/libft
+LIBFT_PATH = lib/libft/
 LIBFT_FLAG = -lft
+LIBFT_NAME = libft.a
+LIBFT = $(addprefix $(LIBFT_PATH), $(LIBFT_NAME))
 
 SRC =
 SRCDIR = src/
@@ -37,18 +39,23 @@ SRC += $(addprefix $(SRCDIR), $(_SRC))
 
 OBJ = $(SRC:.c=.o)
 
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_PATH) CC="$(CC)" CFLAGS="$(CFLAGS)"
+
 %.o: %.c
 	$(CC) $(CFLAGS) -I $(INCLUDE) -o $@ -c $<
 
-$(NAME): $(OBJ)
-	$(CC) $^ -L $(LIBFT_PATH) $(LIBFT_FLAG) -o $(NAME)
+$(NAME): $(OBJ) $(LIBFT)
+	$(CC) $^ -L $(LIBFT_PATH) $(LIBFT_FLAG) -o $@
 
 all: $(NAME)
 
 clean:
+	$(MAKE) -C $(LIBFT_PATH) $@
 	$(RM) $(OBJ)
 
 fclean: clean
+	$(MAKE) -C $(LIBFT_PATH) $@
 	$(RM) $(NAME)
 
 re: fclean all
