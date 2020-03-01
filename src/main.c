@@ -2,6 +2,7 @@
 #include <ft_stdlib.h>
 #include <ft_string.h>
 #include <ft_unistd.h>
+#include <signal.h>
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -100,6 +101,7 @@ main(int argc, char **argv)
 	lenv_init();
 	while (1)
 	{
+		signal(SIGINT, SIG_IGN);
 		prompt();
 		char *line = NULL;
 		if (ugetline(FT_STDIN, &line) != 1)

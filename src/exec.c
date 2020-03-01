@@ -2,6 +2,7 @@
 #include <ft_stdlib.h>
 #include <ft_string.h>
 #include <ft_unistd.h>
+#include <signal.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -26,6 +27,7 @@ exec_proc(char *file, char **argv)
 	pid_t pid = fork();
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		execve(file, argv, g_env);
 		exit(0);
 	}
