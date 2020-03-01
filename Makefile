@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: jdeathlo <jdeathlo@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2019/09/03 19:48:19 by jdeathlo          #+#    #+#              #
-#    Updated: 2020/02/29 15:50:10 by jdeathlo         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 NAME = minishell
 
 CFLAGS = -std=c99 -Wall -Werror -Wextra
@@ -39,13 +27,11 @@ SRC += $(addprefix $(SRCDIR), $(_SRC))
 
 OBJ = $(SRC:.c=.o)
 
-$(LIBFT):
-	$(MAKE) -C $(LIBFT_PATH) CC="$(CC)" CFLAGS="$(CFLAGS)"
-
 %.o: %.c
 	$(CC) $(CFLAGS) -I $(INCLUDE) -o $@ -c $<
 
-$(NAME): $(OBJ) $(LIBFT)
+$(NAME): $(OBJ)
+	$(MAKE) -C $(LIBFT_PATH) CC="$(CC)" CFLAGS="$(CFLAGS)"
 	$(CC) $^ -L $(LIBFT_PATH) $(LIBFT_FLAG) -o $@
 
 all: $(NAME)
