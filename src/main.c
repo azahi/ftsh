@@ -31,7 +31,22 @@ sh_split(char *line, int *linec)
 	int i = 0;
 	while (token)
 	{
-		tokens[i] = token;
+		char *expand = ft_strchr(token, '$');
+		if (expand)
+		{
+			expand++;
+			char *expanded = lenv_getenv(expand);
+			if (expanded)
+			{
+				size_t el = ft_strlen(expanded);
+				size_t etl = expand - token - 1;
+				tokens[i] = ft_calloc(sizeof (*tokens), el + etl);
+				ft_memcpy(tokens[i], token, etl);
+				ft_strcpy(tokens[i], expanded);
+			}
+		}
+		else
+			tokens[i] = strdup(token);
 		i++;
 		if (i >= bufsize)
 		{
@@ -111,15 +126,27 @@ main(int argc, char **argv)
 		}
 		int lc;
 		char **lv = sh_split(line, &lc);
+		free(line);
 		if (!lv)
 		{
-			free(line);
+			char **lvp = lv;
+			while (*lvp)
+			{
+				free(*lvp);
+				lvp++;
+			}
+			free(lv);
 			lenv_deinit();
 			exit(EXIT_FAILURE);
 		}
 		int status = sh_exec(lc, lv);
+		char **lvp = lv;
+		while (*lvp)
+		{
+			free(*lvp);
+			lvp++;
+		}
 		free(lv);
-		free(line);
 		if (status == -10)
 		{
 			lenv_deinit();
