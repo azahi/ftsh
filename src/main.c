@@ -16,11 +16,16 @@
 #define MINISHELL_INPUT_DELIMITERS "\t\n\v\f\r "
 
 /**
- * Splits input into arguments.
+ * A fucking stupid hack because of this fucking stupid 42's subject that
+ * dictates that I fucking can't fucking use getpid(2) like a proper
+ * functional human being.
  *
- * TODO We are hard splitting every white space that we encounter. This will
- * surely break the possibility of using escape sequences like "foo\ bar" and
- * etc.
+ * I'm so fucking angry.
+ */
+int g_prompt_set = 0;
+
+/**
+ * Splits input into arguments.
  */
 static char **
 sh_split(char *line, int *linec)
@@ -31,22 +36,45 @@ sh_split(char *line, int *linec)
 	int i = 0;
 	while (token)
 	{
+		/**
+		 * Environment variable expansion.
+		 */
 		char *expand = ft_strchr(token, '$');
 		if (expand)
 		{
 			expand++;
+			size_t etl = expand - token - 1;
 			char *expanded = lenv_getenv(expand);
 			if (expanded)
 			{
 				size_t el = ft_strlen(expanded);
-				size_t etl = expand - token - 1;
-				tokens[i] = ft_calloc(sizeof (*tokens), el + etl);
+				tokens[i] = malloc(sizeof (*tokens) * (el + etl));
 				ft_memcpy(tokens[i], token, etl);
-				ft_strcpy(tokens[i], expanded);
+				ft_memcpy(tokens[i] + etl, expanded, el);
+				tokens[i][el + etl] = '\0';
 			}
+			else
+				tokens[i] = ft_strndup(token, etl);
 		}
 		else
-			tokens[i] = strdup(token);
+			tokens[i] = ft_strdup(token);
+
+		/**
+		 * '~' expansion.
+		 */
+		if (*tokens[i] == '~')
+		{
+			char *home_expand = lenv_getenv("HOME");
+			size_t hl = ft_strlen(home_expand);
+			size_t tl = ft_strlen(tokens[i]);
+			char *tmp = malloc(sizeof (*tmp) * (hl + tl - 1));
+			ft_memcpy(tmp, home_expand, hl);
+			ft_memcpy(tmp + hl, tokens[i] + 1, tl - 1);
+			tmp[hl + tl] = '\0';
+			free(tokens[i]);
+			tokens[i] = tmp;
+		}
+
 		i++;
 		if (i >= bufsize)
 		{
@@ -97,10 +125,19 @@ print_usage(void)
 	exit(EXIT_SUCCESS);
 }
 
+static void
+sigint_shell()
+{
+	ufputc(FT_STDOUT, '\n');
+	prompt();
+	g_prompt_set = 1;
+}
+
 int
 main(int argc, char **argv)
 {
 	char ch;
+	char *shell = argv[0];
 	while ((ch = ft_getopt(argc, argv, "v")) != -1)
 	{
 		if (ch == 'v')
@@ -114,14 +151,18 @@ main(int argc, char **argv)
 	argv += g_optind;
 
 	lenv_init();
+	lenv_setenv("SHELL", shell, 1);
 	while (1)
 	{
-		signal(SIGINT, SIG_IGN);
-		prompt();
+		signal(SIGINT, sigint_shell);
+		if (!g_prompt_set)
+			prompt();
+		g_prompt_set = 0;
 		char *line = NULL;
 		if (ugetline(FT_STDIN, &line) != 1)
 		{
 			lenv_deinit();
+			ufputc(FT_STDOUT, '\n');
 			exit(EXIT_FAILURE);
 		}
 		int lc;

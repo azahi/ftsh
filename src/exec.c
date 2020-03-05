@@ -69,8 +69,14 @@ sh_exec_file(char **argv)
 		return (1);
 
 	char *path = lenv_getenv("PATH");
+	//if (!path)
+	//	path = "/usr/local/bin:/usr/bin:/bin";
 	if (!path)
-		path = "/usr/local/bin:/usr/bin:/bin";
+	{
+		ufputs(FT_STDERR, "minishell: command not found: ");
+		ufputsn(FT_STDERR, argv[0]);
+		return (1);
+	}
 	size_t l = ft_strlen(path);
 
 	const char *p = path, *z;

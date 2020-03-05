@@ -8,7 +8,7 @@
 #include "env.h"
 
 /**
- * Target key helper.
+ * Environment modification routine.
  */
 static void
 env_rm_add(char *old, char *new)
@@ -41,7 +41,7 @@ env_rm_add(char *old, char *new)
 }
 
 /**
- * Kinda mimics the internal implementation of putenv(3)
+ * Internal implementation of putnev(3)
  */
 static int
 env_putenv(char *s, size_t l, char *r)
@@ -65,14 +65,14 @@ env_putenv(char *s, size_t l, char *r)
 	if (g_env == oldenv)
 	{
 		newenv = malloc(sizeof (*newenv) * (i + 2));
-		for (size_t j = 0; j < (i + 2); j++)
-			newenv[j] = oldenv[j];
-		free(oldenv);
 		if (!newenv)
 		{
 			free(r);
 			return (-1);
 		}
+		for (size_t j = 0; j < i + 2; j++)
+			newenv[j] = oldenv[j];
+		free(oldenv);
 	}
 	else
 	{
@@ -128,12 +128,12 @@ lenv_getenv(const char *name)
  * setenv(3)
  */
 int
-lenv_set(char *key, char *val)
+lenv_setenv(char *key, char *val, int overwrite)
 {
 	size_t kp;
 	if (!key || !(kp = ft_strchrnul(key, '=') - key) || key[kp])
 		return (-1);
-	if (lenv_getenv(key))
+	if (!overwrite && lenv_getenv(key))
 		return (0);
 
 	size_t vp = ft_strlen(val);
@@ -151,7 +151,7 @@ lenv_set(char *key, char *val)
  * unsetenv(3)
  */
 int
-lenv_unset(char *name)
+lenv_unsetenv(char *name)
 {
 	size_t l = ft_strchrnul(name, '=') - name;
 	if (!l || name[l])

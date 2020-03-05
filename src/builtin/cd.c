@@ -18,7 +18,7 @@ builtin_cd(int argc, char **argv)
 
 	char *target = argv[1];
 	char buf[PATH_MAX];
-	if (!getcwd(buf, sizeof(buf)))
+	if (!getcwd(buf, sizeof (buf)))
 	{
 		uputs("cd: error: ");
 		uputsn(target);
@@ -43,8 +43,6 @@ builtin_cd(int argc, char **argv)
 		ufputsn(FT_STDERR, target);
 		return (1);
 	}
-	lenv_set("PWD", buf);
-	lenv_set("OLDPWD", prev_dir);
 	free(prev_dir);
 	prev_dir = ft_strdup(buf);
 	return (0);

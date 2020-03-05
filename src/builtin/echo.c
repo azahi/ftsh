@@ -7,8 +7,10 @@
 int
 builtin_echo(int argc, char **argv)
 {
+	(void)argc;
+
 	int nonl = 0;
-	if (argc > 1)
+	if (argv[1])
 	{
 		argv++;
 		if (!ft_strcmp(*argv, "-n"))
