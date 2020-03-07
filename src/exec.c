@@ -108,7 +108,7 @@ sh_exec_builtin(int argc, char **argv)
 	int i = 0;
 	while (i < BUILTIN_COUNT)
 	{
-		if (!ft_strcmp(argv[0], builtin_names[i]))
+		if (!ft_strcmp(argv[0], g_builtin_names[i]))
 		{
 #ifdef DEBUG
 			fprintf(stderr, "sh_exec_builtin(%d", argc);
@@ -116,7 +116,7 @@ sh_exec_builtin(int argc, char **argv)
 				fprintf(stderr, ", \"%s\"", argv[j]);
 			fprintf(stderr, "): %p => OK\n", *(builtin_func)[i]);
 #endif /* !DEBUG */
-			return ((*builtin_func[i])(argc, argv));
+			return ((*g_builtin_func[i])(argc, argv));
 		}
 		i++;
 	}

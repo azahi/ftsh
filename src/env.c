@@ -1,50 +1,53 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/07 18:47:04 by pparalax          #+#    #+#             */
+/*   Updated: 2020/03/07 21:21:44 by pparalax         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft_stdlib.h>
 #include <ft_string.h>
-
-#ifdef DEBUG
-#include <stdio.h>
-#endif /* !DEBUG */
-
 #include "env.h"
 
-/**
- * Environment modification routine.
- */
-static void
-env_rm_add(char *old, char *new)
+static void	env_rm_add(char *old, char *new)
 {
-	static char **env_alloced;
-	static size_t env_alloced_n;
-	for (size_t i = 0; i < env_alloced_n; i++)
-	{
+	static char		**env_alloced;
+	static size_t	env_alloced_n;
+	int				i;
+	char			**t;
+
+	i = -1;
+	while ((i++ || 1) && i < (int)env_alloced_n)
 		if (env_alloced[i] == old)
 		{
 			env_alloced[i] = new;
 			free(old);
-			return;
+			return ;
 		}
 		else if (!env_alloced[i] && new)
 		{
 			env_alloced[i] = new;
 			new = 0;
 		}
-	}
-	if (!new)
-		return;
-	char **t;
-	if (!(t = malloc(sizeof (*t) * (env_alloced_n + 1))))
-		return;
-	for (size_t j = 0; j < env_alloced_n; j++)
-		t[j] = env_alloced[j];
+	if (!new || !(t = malloc(sizeof(*t) * (env_alloced_n + 1))))
+		return ;
+	i = -1;
+	while ((i++ || 1) && i < (int)env_alloced_n)
+		t[i] = env_alloced[i];
 	free(env_alloced);
-	(env_alloced = t)[env_alloced_n++] = new;
+	env_alloced = t;
+	t[env_alloced_n++] = new;
 }
 
 /**
  * Internal implementation of putnev(3)
  */
-static int
-env_putenv(char *s, size_t l, char *r)
+static int	env_putenv(char *s, size_t l, char *r)
 {
 	size_t i = 0;
 	if (g_env)
@@ -127,8 +130,7 @@ lenv_getenv(const char *name)
 /**
  * setenv(3)
  */
-int
-lenv_setenv(char *key, char *val, int overwrite)
+int 	lenv_setenv(char *key, char *val, int overwrite)
 {
 	size_t kp;
 	if (!key || !(kp = ft_strchrnul(key, '=') - key) || key[kp])
@@ -150,8 +152,7 @@ lenv_setenv(char *key, char *val, int overwrite)
 /**
  * unsetenv(3)
  */
-int
-lenv_unsetenv(char *name)
+int		lenv_unsetenv(char *name)
 {
 	size_t l = ft_strchrnul(name, '=') - name;
 	if (!l || name[l])
