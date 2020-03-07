@@ -39,9 +39,7 @@ exec_proc(char *file, char **argv)
 	else
 	{
 		int wstatus;
-		do
-			waitpid(pid, &wstatus, WUNTRACED);
-		while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus));
+		waitpid(pid, &wstatus, WUNTRACED);
 	}
 	return (0);
 }
@@ -84,7 +82,8 @@ sh_exec_file(char **argv)
 	{
 		char b[l + k + 1]; /* Not norm-like */
 		z = ft_strchrnul(p, ':');
-		if (z - p >= (long)l) {
+		if (z - p >= (long)l)
+		{
 			if (!*z++)
 				break;
 			continue;

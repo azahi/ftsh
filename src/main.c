@@ -16,15 +16,6 @@
 #define MINISHELL_INPUT_DELIMITERS "\t\n\v\f\r "
 
 /**
- * A fucking stupid hack because of this fucking stupid 42's subject that
- * dictates that I fucking can't fucking use getpid(2) like a proper
- * functional human being.
- *
- * I'm so fucking angry.
- */
-int g_prompt_set = 0;
-
-/**
  * Splits input into arguments.
  */
 static char **
@@ -130,7 +121,6 @@ sigint_shell()
 {
 	ufputc(FT_STDOUT, '\n');
 	prompt();
-	g_prompt_set = 1;
 }
 
 int
@@ -155,9 +145,7 @@ main(int argc, char **argv)
 	while (1)
 	{
 		signal(SIGINT, sigint_shell);
-		if (!g_prompt_set)
-			prompt();
-		g_prompt_set = 0;
+		prompt();
 		char *line = NULL;
 		if (ugetline(FT_STDIN, &line) != 1)
 		{
