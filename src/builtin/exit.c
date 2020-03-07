@@ -1,10 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/07 18:32:01 by pparalax          #+#    #+#             */
+/*   Updated: 2020/03/07 18:32:26 by pparalax         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft_stdlib.h>
 
-int
-builtin_exit(int argc, char **argv)
+int	builtin_exit(int argc, char **argv)
 {
 	(void)argc;
 	(void)argv;
-
 	return (-10);
 }

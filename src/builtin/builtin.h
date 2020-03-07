@@ -1,16 +1,28 @@
-#ifndef __BUILTIN_H__
-#define __BUILTIN_H__
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/07 17:15:10 by pparalax          #+#    #+#             */
+/*   Updated: 2020/03/07 17:31:55 by pparalax         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#define BUILTIN_COUNT 6
+#ifndef BUILTIN_H
+# define BUILTIN_H
 
-int builtin_cd(int argc, char **argv);
-int builtin_echo(int argc, char **argv);
-int builtin_env(int argc, char **argv);
-int builtin_exit(int argc, char **argv);
-int builtin_setenv(int argc, char **argv);
-int builtin_unsetenv(int argc, char **argv);
+# define BUILTIN_COUNT 6
 
-const char *builtin_names[] = {
+int			builtin_cd(int argc, char **argv);
+int			builtin_echo(int argc, char **argv);
+int			builtin_env(int argc, char **argv);
+int			builtin_exit(int argc, char **argv);
+int			builtin_setenv(int argc, char **argv);
+int			builtin_unsetenv(int argc, char **argv);
+
+const char	*g_builtin_names[] = {
 	"cd",
 	"echo",
 	"env",
@@ -19,7 +31,7 @@ const char *builtin_names[] = {
 	"unsetenv"
 };
 
-int (*builtin_func[])(int, char **) = {
+int			(*g_builtin_func[])(int, char **) = {
 	&builtin_cd,
 	&builtin_echo,
 	&builtin_env,
@@ -28,4 +40,4 @@ int (*builtin_func[])(int, char **) = {
 	&builtin_unsetenv
 };
 
-#endif /* !__BUILTIN_H__ */
+#endif
