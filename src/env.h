@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdeathlo <jdeathlo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:42:55 by pparalax          #+#    #+#             */
-/*   Updated: 2020/03/09 16:31:11 by pparalax         ###   ########.fr       */
+/*   Updated: 2020/03/09 21:16:41 by jdeathlo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,7 @@ char	*lenv_getenv(const char *name);
 
 int		lenv_setenv(const char *key, const char *val, int overwrite);
 int		lenv_unsetenv(const char *name);
+
+void	env_rm_add(char *old, char *new);
 
 #endif

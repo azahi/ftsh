@@ -20,9 +20,12 @@ _SRC = \
 	builtin/setenv.c \
 	builtin/unsetenv.c \
 	env.c \
+	error.c \
 	exec.c \
 	main.c \
-	prompt.c
+	parser.c \
+	prompt.c \
+	putenv.c
 SRC += $(addprefix $(SRCDIR), $(_SRC))
 
 OBJ = $(SRC:.c=.o)

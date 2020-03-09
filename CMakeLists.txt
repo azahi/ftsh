@@ -28,8 +28,11 @@ add_executable(minishell
         src/builtin/setenv.c
         src/builtin/unsetenv.c
         src/env.c
+        src/error.c
         src/exec.c
         src/main.c
-        src/prompt.c)
+        src/parser.c
+        src/prompt.c
+        src/putenv.c)
 target_link_libraries(minishell
         PUBLIC ft)

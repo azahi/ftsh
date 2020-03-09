@@ -6,7 +6,7 @@
 /*   By: jdeathlo <jdeathlo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/09 18:13:03 by pparalax          #+#    #+#             */
-/*   Updated: 2020/03/09 19:25:33 by jdeathlo         ###   ########.fr       */
+/*   Updated: 2020/03/09 21:09:08 by jdeathlo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 
 #include "builtin/builtin.h"
 #include "env.h"
+#include "error.h"
 #include "exec.h"
 
 static int	exec_proc(char *file, char **argv)
@@ -53,13 +54,6 @@ static int	can_exec(char *file)
 	if (!stat(file, &st) && (st.st_mode & S_IXUSR))
 		return (1);
 	return (0);
-}
-
-static int	err_norme(const char *s)
-{
-	ufputs(FT_STDERR, "minishell: command not found: ");
-	ufputsn(FT_STDERR, s);
-	return (1);
 }
 
 static int	sh_exec_file(char **argv, size_t k, size_t l, int first)
