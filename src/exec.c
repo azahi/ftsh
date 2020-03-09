@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/09 18:13:03 by pparalax          #+#    #+#             */
+/*   Updated: 2020/03/09 19:16:53 by pparalax         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft.h>
 #include <ft_stdlib.h>
 #include <ft_string.h>
@@ -8,19 +20,21 @@
 #include <sys/wait.h>
 
 #ifdef __linux__
-#include <linux/limits.h>
+# include <linux/limits.h>
 #else
-#include <limits.h>
+# include <limits.h>
 #endif
 
 #include "builtin/builtin.h"
 #include "env.h"
 #include "exec.h"
 
-static int
-exec_proc(char *file, char **argv)
+static int	exec_proc(char *file, char **argv)
 {
-	pid_t pid = fork();
+	int		wstatus;
+	pid_t	pid;
+
+	pid = fork();
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
@@ -33,75 +47,60 @@ exec_proc(char *file, char **argv)
 		return (1);
 	}
 	else
-	{
-		int wstatus;
 		waitpid(pid, &wstatus, WUNTRACED);
-	}
 	return (0);
 }
 
-static int
-can_exec(char *file)
+static int	can_exec(char *file)
 {
-	struct stat st;
-	if (!stat(file, &st))
-	{
-		if (st.st_mode & S_IXUSR)
-			return (1);
-	}
+	struct stat	st;
+
+	if (!stat(file, &st) && (st.st_mode & S_IXUSR))
+		return (1);
 	return (0);
 }
 
-static int
-sh_exec_file(char **argv)
+static int	err_norme(const char *s)
 {
-	if (ft_strchr(argv[0], '/') && can_exec(argv[0]))
-		return (exec_proc(argv[0], argv));
-
-	size_t k = ft_strnlen(argv[0], NAME_MAX + 1);
-	if (k > NAME_MAX)
-		return (1);
-
-	char *path = lenv_getenv("PATH");
-	if (!path)
-	{
-		ufputs(FT_STDERR, "minishell: command not found: ");
-		ufputsn(FT_STDERR, argv[0]);
-		return (1);
-	}
-	size_t l = ft_strlen(path);
-
-	const char *p = path, *z;
-	int first = 1;
-	while (1)
-	{
-		char b[l + k + 1];
-		z = ft_strchrnul(p, ':'); // bug
-		if (!first && (size_t)z - (size_t)p >= l)
-		{
-			if (!*z++)
-				break;
-			continue;
-		}
-		first = 0;
-		ft_memcpy(b, p, z - p);
-		b[z - p] = '/';
-		ft_memcpy(b + (z - p) + (z > p), argv[0], k + 1);
-		if (can_exec(b))
-			return (exec_proc(b, argv));
-		if (!*z++)
-			break;
-		p = z;
-	}
 	ufputs(FT_STDERR, "minishell: command not found: ");
-	ufputsn(FT_STDERR, argv[0]);
+	ufputsn(FT_STDERR, s);
 	return (1);
 }
 
-static int
-sh_exec_builtin(int argc, char **argv)
+static int	sh_exec_file(char **argv, size_t k, size_t l, int first)
 {
-	int i = 0;
+	const char	*p;
+	const char	*z;
+	char		b[NAME_MAX];
+
+	if ((k = ft_strnlen(argv[0], NAME_MAX + 1)) > NAME_MAX)
+		return (1);
+	if (!(p = lenv_getenv("PATH")))
+		return (err_norme(argv[0]));
+	l = ft_strlen(p);
+	while ((z = ft_strchrnul(p, ':')) || 1)
+	{
+		if (!(!first && z - p >= (long)l) && !(first = 0))
+		{
+			ft_memcpy(b, p, z - p);
+			b[z - p] = '/';
+			ft_memcpy(b + (z - p) + (z > p), argv[0], k + 1);
+			if (can_exec(b))
+				return (exec_proc(b, argv));
+			if (!*z++ || ((p = z) && 0))
+				break ;
+		}
+		if (!*z++)
+			break ;
+	}
+	return (err_norme(argv[0]));
+}
+
+static int	sh_exec_builtin(int argc, char **argv)
+{
+	int	i;
+
+	i = 0;
 	while (i < BUILTIN_COUNT)
 	{
 		if (!ft_strcmp(argv[0], g_builtin_names[i]))
@@ -111,13 +110,15 @@ sh_exec_builtin(int argc, char **argv)
 	return (-1);
 }
 
-int
-sh_exec(int argc, char **argv)
+int			sh_exec(int argc, char **argv)
 {
+	int ret;
+
 	if (!argv[0])
 		return (1);
-	int ret;
 	if ((ret = sh_exec_builtin(argc, argv)) != -1)
 		return (ret);
-	return (sh_exec_file(argv));
+	if (ft_strchr(argv[0], '/') && can_exec(argv[0]))
+		return (exec_proc(argv[0], argv));
+	return (sh_exec_file(argv, 0, 0, 1));
 }
