@@ -58,7 +58,7 @@ sh_split(char *line, int *linec)
 			char *tmp = malloc(sizeof (*tmp) * (hl + tl - 1));
 			ft_memcpy(tmp, home_expand, hl);
 			ft_memcpy(tmp + hl, tokens[i] + 1, tl - 1);
-			tmp[hl + tl] = '\0';
+			tmp[hl + tl - 1] = '\0';
 			free(tokens[i]);
 			tokens[i] = tmp;
 		}
