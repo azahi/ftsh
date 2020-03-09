@@ -1,14 +1,13 @@
 #ifndef __ENV_H__
 #define __ENV_H__
 
-char **g_env;
+#define ENV extern char **environ
+
+ENV;
 
 char *lenv_getenv(const char *);
 
-int lenv_setenv(char *, char *, int);
-int lenv_unsetenv(char *);
-
-void lenv_init(void);
-void lenv_deinit(void);
+int lenv_setenv(const char *, const char *, int);
+int lenv_unsetenv(const char *);
 
 #endif /* !__ENV_H__ */

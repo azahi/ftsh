@@ -8,7 +8,7 @@ builtin_env(int argc, char **argv)
 	(void)argc;
 	(void)argv;
 
-	char **env = g_env;
+	char **env = environ;
 	while(*env)
 	{
 		ufputsn(FT_STDOUT, *env);

@@ -28,7 +28,7 @@ exec_proc(char *file, char **argv)
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
-		execve(file, argv, g_env);
+		execve(file, argv, environ);
 		exit(0);
 	}
 	else if (pid < 0)
