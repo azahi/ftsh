@@ -1,5 +1,5 @@
 #ifdef __linux__
-#define _GNU_SOURCE /* gethostname(2) */
+#define _GNU_SOURCE
 #endif /* !_GNU_SOURCE */
 
 #include <ft.h>
@@ -20,13 +20,6 @@
 /**
  * Display a prompt message.
  */
-#ifdef DEBUG
-void
-prompt(void)
-{
-	ufputs(FT_STDOUT, "minishell_debug> ");
-}
-#else
 void
 prompt(void)
 {
@@ -51,7 +44,6 @@ prompt(void)
 		ufputs(FT_STDOUT, cwd);
 	ufputs(FT_STDOUT, " $ ");
 }
-#endif /* !DEBUG */
 
 #ifdef _GNU_SOURCE
 #undef _GNU_SOURCE

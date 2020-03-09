@@ -1,9 +1,9 @@
 #ifndef __ENV_H__
 #define __ENV_H__
 
-#define ENV extern char **environ
+#define EXTERN_CHAR_ENVIRON extern char **environ
 
-ENV;
+EXTERN_CHAR_ENVIRON;
 
 char *lenv_getenv(const char *);
 
