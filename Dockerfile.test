@@ -1,0 +1,15 @@
+FROM alpine:3.11.3
+
+LABEL maintainer "Azat Bahawi <azahi@teknik.io>"
+
+RUN apk -U upgrade \
+ && apk add build-base cmake valgrind gdb
+
+COPY . /tmp/minishell
+
+ENV USER=user \
+    HOST=host
+
+WORKDIR /tmp/minishell
+
+CMD [ "sh" ]

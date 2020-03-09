@@ -3,23 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdeathlo <jdeathlo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:45:16 by pparalax          #+#    #+#             */
-/*   Updated: 2020/03/07 18:18:32 by pparalax         ###   ########.fr       */
+/*   Updated: 2020/03/09 19:24:32 by jdeathlo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <limits.h>
 #include <ft.h>
 #include <ft_stdlib.h>
 #include <ft_string.h>
 #include <ft_unistd.h>
-
-#ifdef __linux__
-# include <linux/limits.h>
-#else
-# include <limits.h>
-#endif
 
 #include "../env.h"
 
