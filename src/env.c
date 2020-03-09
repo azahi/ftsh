@@ -6,7 +6,7 @@
 /*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:47:04 by pparalax          #+#    #+#             */
-/*   Updated: 2020/03/09 18:05:01 by pparalax         ###   ########.fr       */
+/*   Updated: 2020/03/09 20:43:31 by pparalax         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,73 +43,53 @@ static void	env_rm_add(char *old, char *new)
 	t[env_alloced_n++] = new;
 }
 
+static int	env_putenv_norme(char *r, char ***oe, char ***ne, int i)
+{
+	free(*oe);
+	(*ne)[i + 1] = NULL;
+	*oe = *ne;
+	environ = *oe;
+	if (r)
+		env_rm_add(0, r);
+	return (0);
+}
 
-//static size_t	env_putenv_norme(char **s, size_t l, char **r)
-//{
-//	char	**e;
-//	char	*tmp;
-//	size_t	i;
-//	char *ss = *s;
-//	char *rr = *r;
-//
-//	i = 0;
-//	e = environ;
-//	while (*e)
-//	{
-//		if (!ft_strncmp(ss, *e, l + 1))
-//		{
-//			tmp = *e;
-//			*e = ss;
-//			env_rm_add(tmp, rr);
-//			return (0);
-//		}
-//		e++;
-//		i++;
-//	}
-//	return i;
-//}
+static char	*env_putenv_tmp(char ***e, char *s)
+{
+	char	*tmp;
 
+	tmp = **e;
+	**e = s;
+	return (tmp);
+}
 
 static int	env_putenv(char *s, size_t l, char *r)
 {
 	size_t		i;
-	static char	**oldenv;
-	char		**newenv;
+	static char	**oe;
+	char		**ne;
+	char		**e;
 
-	i = 0;
-	if (environ)
+	if (!(i = 0) && environ)
 	{
-		//i = env_putenv_norme(&s, l, &r);
-		char **e = environ;
+		e = environ;
 		while (*e)
 		{
 			if (!ft_strncmp(s, *e, l + 1))
 			{
-				char *tmp = *e;
-				*e = s;
-				env_rm_add(tmp, r);
+				env_rm_add(env_putenv_tmp(&e, s), r);
 				return (0);
 			}
 			e++;
 			i++;
 		}
 	}
-	
-	if (!(newenv = malloc(sizeof(*newenv) * (i + 2))))
-	{
-		free(r);
+	if (!(ne = malloc(sizeof(*ne) * (i + 2))))
 		return (-1);
-	}
 	if (i)
-		ft_memcpy(newenv, environ, sizeof(*newenv) * ((environ == oldenv) ? i + 2 : i));
-	free(oldenv);
-	newenv[i] = s;
-	newenv[i + 1] = 0;
-	oldenv = newenv;
-	environ = oldenv;
-	if (r)
-		env_rm_add(0, r);
-	return (0);
+		ft_memcpy(ne, environ, sizeof(*ne) * (i + (environ == oe) * 2));
+	ne[i] = s;
+	return (env_putenv_norme(r, &oe, &ne, i));
 }
 
 char		*lenv_getenv(const char *name)
