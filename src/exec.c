@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdeathlo <jdeathlo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/09 18:13:03 by pparalax          #+#    #+#             */
-/*   Updated: 2020/03/09 19:16:53 by pparalax         ###   ########.fr       */
+/*   Updated: 2020/03/09 19:25:33 by jdeathlo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,11 @@
 #include <ft_stdlib.h>
 #include <ft_string.h>
 #include <ft_unistd.h>
+#include <limits.h>
 #include <signal.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
-#ifdef __linux__
-# include <linux/limits.h>
-#else
-# include <limits.h>
-#endif
 
 #include "builtin/builtin.h"
 #include "env.h"

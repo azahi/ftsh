@@ -14,4 +14,7 @@ RUN cmake -S /tmp/minishell -B /tmp/minishell -DCMAKE_BUILD_TYPE=Release \
  && apk del build-base cmake \
  && rm -rf /var/cache/apk/*
 
+ENV USER=user \
+    HOST=host
+
 CMD [ "minishell" ]

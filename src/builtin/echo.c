@@ -3,18 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdeathlo <jdeathlo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:28:55 by pparalax          #+#    #+#             */
-/*   Updated: 2020/03/07 18:29:49 by pparalax         ###   ########.fr       */
+/*   Updated: 2020/03/09 19:24:09 by jdeathlo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ft.h>
 #include <ft_string.h>
 #include <ft_unistd.h>
-
-#define BUILTIN_ECHO_OPTS "n"
 
 int	builtin_echo(int argc, char **argv)
 {
