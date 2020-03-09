@@ -72,16 +72,18 @@ sh_exec_file(char **argv)
 	size_t l = ft_strlen(path);
 
 	const char *p = path, *z;
+	int first = 1;
 	while (1)
 	{
 		char b[l + k + 1];
-		z = ft_strchrnul(p, ':');
-		if (z - p >= (long)l)
+		z = ft_strchrnul(p, ':'); // bug
+		if (!first && (size_t)z - (size_t)p >= l)
 		{
 			if (!*z++)
 				break;
 			continue;
 		}
+		first = 0;
 		ft_memcpy(b, p, z - p);
 		b[z - p] = '/';
 		ft_memcpy(b + (z - p) + (z > p), argv[0], k + 1);
