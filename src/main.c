@@ -6,7 +6,7 @@
 #include <signal.h>
 
 #ifdef DEBUG
-#include <stdio.h>
+# include <stdio.h>
 #endif /* !DEBUG */
 
 #include "env.h"
@@ -93,87 +93,48 @@ sh_split(char *line, int *linec)
 }
 
 static void
-print_version(void)
-{
-	ufputs(FT_STDOUT, "minishell, version 0.1\n");
-	ufputs(FT_STDOUT, "Copyright (C) 2020 Azat Bahawi <azahi@teknik.io>\n");
-	ufputs(FT_STDOUT,
-			"License WTFPL: version 2 or later <http://www.wtfpl.net/txt/copying/>\n");
-	ufputc(FT_STDOUT, '\n');
-	ufputs(FT_STDOUT, "This is non-free software; ");
-	ufputs(FT_STDOUT, "you are free to do whatever the fuck you want to do.\n");
-	ufputs(FT_STDOUT, "There is NO FUCKS GIVEN ABOUT WARRANITY, ");
-	ufputs(FT_STDOUT, "to the extent permitted by law.\n");
-	ufputc(FT_STDOUT, '\n');
-	ufputs(FT_STDOUT, "Written by jdeathlo and pparalax.\n");
-	exit(EXIT_SUCCESS);
-}
-
-static void
-print_usage(void)
-{
-	ufputs(FT_STDOUT, "Usage: minishell [-vh]\n");
-	ufputs(FT_STDOUT, "\n\t-v\tprint version\n");
-	exit(EXIT_SUCCESS);
-}
-
-static void
 sigint_shell()
 {
 	ufputc(FT_STDOUT, '\n');
 	prompt();
 }
 
-int
-main(int argc, char **argv)
+static void	free_lv(char ***lv)
 {
-	char ch;
-	char *shell = argv[0];
-	while ((ch = ft_getopt(argc, argv, "v")) != -1)
-	{
-		if (ch == 'v')
-			print_version();
-		else if (ch == 'h')
-			print_usage();
-		else
-			print_usage();
-	}
-	argc -= g_optind;
-	argv += g_optind;
+	char **lvp;
 
-	lenv_setenv("SHELL", shell, 1);
+	lvp = *lv;
+	while (*lvp)
+	{
+		free(*lvp);
+		lvp++;
+	}
+	free(*lv);
+}
+
+int			main(int argc, char **argv)
+{
+	char	*line;
+	int		lc;
+	char	**lv;
+	int		status;
+
+	lenv_setenv("SHELL", argv[0], 1);
 	while (1)
 	{
 		signal(SIGINT, sigint_shell);
 		prompt();
-		char *line = NULL;
 		if (ugetline(FT_STDIN, &line) != 1)
 		{
 			ufputc(FT_STDOUT, '\n');
 			exit(EXIT_FAILURE);
 		}
-		int lc;
-		char **lv = sh_split(line, &lc);
+		lv = sh_split(line, &lc);
 		free(line);
 		if (!lv)
-		{
-			char **lvp = lv;
-			while (*lvp)
-			{
-				free(*lvp);
-				lvp++;
-			}
-			free(lv);
 			exit(EXIT_FAILURE);
-		}
-		int status = sh_exec(lc, lv);
-		char **lvp = lv;
-		while (*lvp)
-		{
-			free(*lvp);
-			lvp++;
-		}
-		free(lv);
+		status = sh_exec(lc, lv);
+		free_lv(&lv);
 		if (status == -10)
 			exit(EXIT_SUCCESS);
 	}
