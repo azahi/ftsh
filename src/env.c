@@ -6,7 +6,7 @@
 /*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:47:04 by pparalax          #+#    #+#             */
-/*   Updated: 2020/03/09 14:21:42 by pparalax         ###   ########.fr       */
+/*   Updated: 2020/03/09 18:05:01 by pparalax         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ static void	env_rm_add(char *old, char *new)
 		if (env_alloced[i] == old)
 		{
 			env_alloced[i] = new;
-			free(old);
-			return ;
+			return (free(old));
 		}
 		else if (!env_alloced[i] && new)
 		{
@@ -44,15 +43,45 @@ static void	env_rm_add(char *old, char *new)
 	t[env_alloced_n++] = new;
 }
 
-/**
- * Internal implementation of putnev(3)
- */
+
+//static size_t	env_putenv_norme(char **s, size_t l, char **r)
+//{
+//	char	**e;
+//	char	*tmp;
+//	size_t	i;
+//	char *ss = *s;
+//	char *rr = *r;
+//
+//	i = 0;
+//	e = environ;
+//	while (*e)
+//	{
+//		if (!ft_strncmp(ss, *e, l + 1))
+//		{
+//			tmp = *e;
+//			*e = ss;
+//			env_rm_add(tmp, rr);
+//			return (0);
+//		}
+//		e++;
+//		i++;
+//	}
+//	return i;
+//}
+
+
 static int	env_putenv(char *s, size_t l, char *r)
 {
-	size_t i = 0;
+	size_t		i;
+	static char	**oldenv;
+	char		**newenv;
+
+	i = 0;
 	if (environ)
 	{
-		for (char **e = environ; *e; e++, i++)
+		//i = env_putenv_norme(&s, l, &r);
+		char **e = environ;
+		while (*e)
 		{
 			if (!ft_strncmp(s, *e, l + 1))
 			{
@@ -61,108 +90,82 @@ static int	env_putenv(char *s, size_t l, char *r)
 				env_rm_add(tmp, r);
 				return (0);
 			}
+			e++;
+			i++;
 		}
 	}
-	static char **oldenv;
-	char **newenv;
-	if (environ == oldenv)
+	
+	if (!(newenv = malloc(sizeof(*newenv) * (i + 2))))
 	{
-		newenv = malloc(sizeof (*newenv) * (i + 2));
-		if (!newenv)
-		{
-			free(r);
-			return (-1);
-		}
-		for (size_t j = 0; j < i + 2; j++)
-			newenv[j] = oldenv[j];
-		free(oldenv);
+		free(r);
+		return (-1);
 	}
-	else
-	{
-		newenv = malloc(sizeof (*newenv) * (i + 2));
-		if (!newenv)
-		{
-			free(r);
-			return (-1);
-		}
-		if (i)
-			ft_memcpy(newenv, environ, sizeof (*newenv) * i);
-		free(oldenv);
-	}
+	if (i)
+		ft_memcpy(newenv, environ, sizeof(*newenv) * ((environ == oldenv) ? i + 2 : i));
+	free(oldenv);
 	newenv[i] = s;
 	newenv[i + 1] = 0;
-	environ = oldenv = newenv;
+	oldenv = newenv;
+	environ = oldenv;
 	if (r)
 		env_rm_add(0, r);
 	return (0);
 }
 
-/**
- * getenv(3)
- */
-char *
-lenv_getenv(const char *name)
+char		*lenv_getenv(const char *name)
 {
-	char **env = environ;
-	size_t l = ft_strchrnul(name, '=') - name;
+	char	**env;
+	size_t	l;
+
+	env = environ;
+	l = ft_strchrnul(name, '=') - name;
 	if (l && !name[l] && env)
 	{
 		env = environ;
 		while (*env)
 		{
 			if (!ft_strncmp(name, *env, l) && l[*env] == '=')
-			{
-#ifdef DEBUG
-				fprintf(stderr, "DEBUG: lenv_getenv(\"%s\"): \"%s\"\n",
-						name, *env + l + 1);
-#endif /* !DEBUG */
 				return (*env + l + 1);
-			}
 			env++;
 		}
 	}
-#ifdef DEBUG
-	fprintf(stderr, "DEBUG: lenv_getenv(\"%s\"): (null)\n", name);
-#endif /* !DEBUG */
 	return (NULL);
 }
 
-/**
- * setenv(3)
- */
-int
-lenv_setenv(const char *key, const char *val, int overwrite)
+int			lenv_setenv(const char *key, const char *val, int overwrite)
 {
-	size_t kp;
+	size_t	kp;
+	size_t	vp;
+	char	*s;
+
 	if (!key || !(kp = ft_strchrnul(key, '=') - key) || key[kp])
 		return (-1);
 	if (!overwrite && lenv_getenv(key))
 		return (0);
-
-	size_t vp = ft_strlen(val);
-	char *s = malloc(kp + vp + 2);
+	vp = ft_strlen(val);
+	s = malloc(kp + vp + 2);
 	if (!s)
 		return (-1);
-
 	ft_memcpy(s, key, kp);
 	s[kp] = '=';
 	ft_memcpy(s + kp + 1, val, vp + 1);
 	return (env_putenv(s, kp, s));
 }
 
-/**
- * unsetenv(3)
- */
-int
-lenv_unsetenv(const char *name)
+int			lenv_unsetenv(const char *name)
 {
-	size_t l = ft_strchrnul(name, '=') - name;
+	size_t	l;
+	char	**e;
+	char	**eo;
+
+	l = ft_strchrnul(name, '=') - name;
 	if (!l || name[l])
 		return (-1);
 	if (environ)
 	{
-		char **e = environ, **eo = e;
-		for (; *e; e++)
+		e = environ;
+		eo = e;
+		while (*e)
 		{
 			if (!ft_strncmp(name, *e, l) && l[*e] == '=')
 				env_rm_add(*e, 0);
@@ -170,6 +173,7 @@ lenv_unsetenv(const char *name)
 				*eo++ = *e;
 			else
 				eo++;
+			e++;
 		}
 		if (eo != e)
 			*eo = 0;

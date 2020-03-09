@@ -1,6 +1,18 @@
-#ifndef __EXEC_H__
-#define __EXEC_H__
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.h                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/09 18:07:56 by pparalax          #+#    #+#             */
+/*   Updated: 2020/03/09 18:07:57 by pparalax         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int sh_exec(int argc, char **argv);
+#ifndef EXEC_H
+# define EXEC_H
 
-#endif /* !__EXEC_H__ */
+int	sh_exec(int argc, char **argv);
+
+#endif

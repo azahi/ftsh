@@ -13,10 +13,6 @@
 #include <limits.h>
 #endif
 
-#ifdef DEBUG
-#include <stdio.h>
-#endif /* !DEBUG */
-
 #include "builtin/builtin.h"
 #include "env.h"
 #include "exec.h"
@@ -67,8 +63,6 @@ sh_exec_file(char **argv)
 		return (1);
 
 	char *path = lenv_getenv("PATH");
-	//if (!path)
-	//	path = "/usr/local/bin:/usr/bin:/bin";
 	if (!path)
 	{
 		ufputs(FT_STDERR, "minishell: command not found: ");
@@ -80,7 +74,7 @@ sh_exec_file(char **argv)
 	const char *p = path, *z;
 	while (1)
 	{
-		char b[l + k + 1]; /* Not norm-like */
+		char b[l + k + 1];
 		z = ft_strchrnul(p, ':');
 		if (z - p >= (long)l)
 		{
@@ -109,15 +103,7 @@ sh_exec_builtin(int argc, char **argv)
 	while (i < BUILTIN_COUNT)
 	{
 		if (!ft_strcmp(argv[0], g_builtin_names[i]))
-		{
-#ifdef DEBUG
-			fprintf(stderr, "sh_exec_builtin(%d", argc);
-			for (int j = 0; j < argc; j++)
-				fprintf(stderr, ", \"%s\"", argv[j]);
-			fprintf(stderr, "): %p => OK\n", *(builtin_func)[i]);
-#endif /* !DEBUG */
 			return ((*g_builtin_func[i])(argc, argv));
-		}
 		i++;
 	}
 	return (-1);

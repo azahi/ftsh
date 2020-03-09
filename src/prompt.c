@@ -6,13 +6,13 @@
 /*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/09 14:34:19 by pparalax          #+#    #+#             */
-/*   Updated: 2020/03/09 14:40:37 by pparalax         ###   ########.fr       */
+/*   Updated: 2020/03/09 16:19:10 by pparalax         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifdef __linux__
 # define _GNU_SOURCE
-#endif
+#endif /* !_GNU_SOURCE */
 
 #include <ft.h>
 #include <ft_string.h>

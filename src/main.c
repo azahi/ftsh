@@ -5,10 +5,6 @@
 #include <ft_unistd.h>
 #include <signal.h>
 
-#ifdef DEBUG
-# include <stdio.h>
-#endif /* !DEBUG */
-
 #include "env.h"
 #include "exec.h"
 #include "prompt.h"
@@ -83,12 +79,6 @@ sh_split(char *line, int *linec)
 	}
 	tokens[i] = NULL;
 	*linec = i;
-#ifdef DEBUG
-	fprintf(stderr, "DEBUG: sh_split():");
-	for (int j = 0; j <= i; j++)
-		fprintf(stderr, " [%d] = \"%s\"", j, tokens[j]);
-	fprintf(stderr, " (linec = %d)\n", *linec);
-#endif /* !DEBUG */
 	return (tokens);
 }
 
@@ -119,6 +109,7 @@ int			main(int argc, char **argv)
 	char	**lv;
 	int		status;
 
+	(void)argc;
 	lenv_setenv("SHELL", argv[0], 1);
 	while (1)
 	{
