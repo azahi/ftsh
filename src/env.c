@@ -6,7 +6,7 @@
 /*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:47:04 by pparalax          #+#    #+#             */
-/*   Updated: 2020/03/07 21:21:44 by pparalax         ###   ########.fr       */
+/*   Updated: 2020/03/09 14:21:42 by pparalax         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ static void	env_rm_add(char *old, char *new)
 static int	env_putenv(char *s, size_t l, char *r)
 {
 	size_t i = 0;
-	if (g_env)
+	if (environ)
 	{
-		for (char **e = g_env; *e; e++, i++)
+		for (char **e = environ; *e; e++, i++)
 		{
 			if (!ft_strncmp(s, *e, l + 1))
 			{
@@ -65,7 +65,7 @@ static int	env_putenv(char *s, size_t l, char *r)
 	}
 	static char **oldenv;
 	char **newenv;
-	if (g_env == oldenv)
+	if (environ == oldenv)
 	{
 		newenv = malloc(sizeof (*newenv) * (i + 2));
 		if (!newenv)
@@ -86,12 +86,12 @@ static int	env_putenv(char *s, size_t l, char *r)
 			return (-1);
 		}
 		if (i)
-			ft_memcpy(newenv, g_env, sizeof (*newenv) * i);
+			ft_memcpy(newenv, environ, sizeof (*newenv) * i);
 		free(oldenv);
 	}
 	newenv[i] = s;
 	newenv[i + 1] = 0;
-	g_env = oldenv = newenv;
+	environ = oldenv = newenv;
 	if (r)
 		env_rm_add(0, r);
 	return (0);
@@ -103,11 +103,11 @@ static int	env_putenv(char *s, size_t l, char *r)
 char *
 lenv_getenv(const char *name)
 {
-	char **env = g_env;
+	char **env = environ;
 	size_t l = ft_strchrnul(name, '=') - name;
 	if (l && !name[l] && env)
 	{
-		env = g_env;
+		env = environ;
 		while (*env)
 		{
 			if (!ft_strncmp(name, *env, l) && l[*env] == '=')
@@ -130,7 +130,8 @@ lenv_getenv(const char *name)
 /**
  * setenv(3)
  */
-int 	lenv_setenv(char *key, char *val, int overwrite)
+int
+lenv_setenv(const char *key, const char *val, int overwrite)
 {
 	size_t kp;
 	if (!key || !(kp = ft_strchrnul(key, '=') - key) || key[kp])
@@ -152,14 +153,15 @@ int 	lenv_setenv(char *key, char *val, int overwrite)
 /**
  * unsetenv(3)
  */
-int		lenv_unsetenv(char *name)
+int
+lenv_unsetenv(const char *name)
 {
 	size_t l = ft_strchrnul(name, '=') - name;
 	if (!l || name[l])
 		return (-1);
-	if (g_env)
+	if (environ)
 	{
-		char **e = g_env, **eo = e;
+		char **e = environ, **eo = e;
 		for (; *e; e++)
 		{
 			if (!ft_strncmp(name, *e, l) && l[*e] == '=')
@@ -173,47 +175,4 @@ int		lenv_unsetenv(char *name)
 			*eo = 0;
 	}
 	return (0);
-}
-
-/**
- * Initialize the local environment table.
- */
-void
-lenv_init(void)
-{
-	extern char	**environ;
-	int size = 0;
-	while (environ[size])
-		size++;
-	if (!(g_env = malloc(sizeof (char *) * (size + 1))))
-		exit(1);
-	int i = 0;
-	while (i < size)
-	{
-		g_env[i] = ft_strdup(environ[i]);
-		i++;
-	}
-	g_env[size] = NULL;
-#ifdef DEBUG
-	fprintf(stderr, "DEBUG: lenv_init(): [0] = \"%s\" [%d] = \"%s\" [%d] = \"%s\"\n",
-			g_env[0], size - 1, g_env[size - 1], size, g_env[size]);
-#endif /* !DEBUG */
-}
-
-/**
- * Destroy the local environment table.
- */
-void
-lenv_deinit(void)
-{
-	char **env = g_env;
-	while (*env)
-	{
-		free(*env);
-		env++;
-	}
-	free(g_env);
-#ifdef DEBUG
-	fprintf(stderr, "DEBUG: lenv_deinit(): OK\n");
-#endif /* !DEBUG */
 }

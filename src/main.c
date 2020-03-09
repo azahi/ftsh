@@ -1,4 +1,5 @@
 #include <ft.h>
+#include <ft_stdio.h>
 #include <ft_stdlib.h>
 #include <ft_string.h>
 #include <ft_unistd.h>
@@ -140,7 +141,6 @@ main(int argc, char **argv)
 	argc -= g_optind;
 	argv += g_optind;
 
-	lenv_init();
 	lenv_setenv("SHELL", shell, 1);
 	while (1)
 	{
@@ -149,7 +149,6 @@ main(int argc, char **argv)
 		char *line = NULL;
 		if (ugetline(FT_STDIN, &line) != 1)
 		{
-			lenv_deinit();
 			ufputc(FT_STDOUT, '\n');
 			exit(EXIT_FAILURE);
 		}
@@ -165,7 +164,6 @@ main(int argc, char **argv)
 				lvp++;
 			}
 			free(lv);
-			lenv_deinit();
 			exit(EXIT_FAILURE);
 		}
 		int status = sh_exec(lc, lv);
@@ -177,9 +175,6 @@ main(int argc, char **argv)
 		}
 		free(lv);
 		if (status == -10)
-		{
-			lenv_deinit();
 			exit(EXIT_SUCCESS);
-		}
 	}
 }

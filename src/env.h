@@ -6,18 +6,20 @@
 /*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:42:55 by pparalax          #+#    #+#             */
-/*   Updated: 2020/03/07 18:46:24 by pparalax         ###   ########.fr       */
+/*   Updated: 2020/03/09 14:22:29 by pparalax         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ENV_H
-# define ENV_H
+#ifndef __ENV_H__
+#define __ENV_H__
 
-char	**g_env;
-char	*lenv_getenv(const char *name);
-int		lenv_setenv(char *key, char *val, int overwrite);
-int		lenv_unsetenv(char *name);
-void	lenv_init(void);
-void	lenv_deinit(void);
+#define ENV extern char **environ
 
-#endif
+ENV;
+
+char *lenv_getenv(const char *);
+
+int lenv_setenv(const char *, const char *, int);
+int lenv_unsetenv(const char *);
+
+#endif /* !__ENV_H__ */

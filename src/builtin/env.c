@@ -6,7 +6,7 @@
 /*   By: pparalax <pparalax@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:30:14 by pparalax          #+#    #+#             */
-/*   Updated: 2020/03/07 18:31:21 by pparalax         ###   ########.fr       */
+/*   Updated: 2020/03/09 14:23:31 by pparalax         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ int	builtin_env(int argc, char **argv)
 
 	(void)argc;
 	(void)argv;
-	env = g_env;
-	while (*env)
+	env = environ;
+	while(*env)
 	{
 		ufputsn(FT_STDOUT, *env);
 		env++;
