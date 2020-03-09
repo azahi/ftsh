@@ -1,10 +1,6 @@
 #include <ft_stdlib.h>
 #include <ft_string.h>
 
-#ifdef DEBUG
-#include <stdio.h>
-#endif /* !DEBUG */
-
 #include "env.h"
 
 /**
@@ -109,18 +105,11 @@ lenv_getenv(const char *name)
 		{
 			if (!ft_strncmp(name, *env, l) && l[*env] == '=')
 			{
-#ifdef DEBUG
-				fprintf(stderr, "DEBUG: lenv_getenv(\"%s\"): \"%s\"\n",
-						name, *env + l + 1);
-#endif /* !DEBUG */
 				return (*env + l + 1);
 			}
 			env++;
 		}
 	}
-#ifdef DEBUG
-	fprintf(stderr, "DEBUG: lenv_getenv(\"%s\"): (null)\n", name);
-#endif /* !DEBUG */
 	return (NULL);
 }
 
