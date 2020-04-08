@@ -1,11 +1,11 @@
-#include <ft.h>
-#include <ft_stdio.h>
+#define _GNU_SOURCE
+
 #include <ft_stdlib.h>
 #include <ft_string.h>
 #include <ft_unistd.h>
 #include <signal.h>
+#include <uio.h>
 
-#include "env.h"
 #include "exec.h"
 #include "prompt.h"
 
@@ -32,7 +32,7 @@ sh_split(char *line, int *linec)
 		{
 			expand++;
 			size_t etl = expand - token - 1;
-			char *expanded = lenv_getenv(expand);
+			char *expanded = ft_getenv(expand);
 			if (expanded)
 			{
 				size_t el = ft_strlen(expanded);
@@ -52,7 +52,7 @@ sh_split(char *line, int *linec)
 		 */
 		if (*tokens[i] == '~')
 		{
-			char *home_expand = lenv_getenv("HOME");
+			char *home_expand = ft_getenv("HOME");
 			size_t hl = ft_strlen(home_expand);
 			size_t tl = ft_strlen(tokens[i]);
 			char *tmp = malloc(sizeof (*tmp) * (hl + tl - 1));
@@ -85,32 +85,31 @@ sh_split(char *line, int *linec)
 static void
 print_version(void)
 {
-	ufputs(FT_STDOUT, "minishell, version 0.1\n");
-	ufputs(FT_STDOUT, "Copyright (C) 2020 Azat Bahawi <azahi@teknik.io>\n");
-	ufputs(FT_STDOUT,
-			"License WTFPL: version 2 or later <http://www.wtfpl.net/txt/copying/>\n");
-	ufputc(FT_STDOUT, '\n');
-	ufputs(FT_STDOUT, "This is non-free software; ");
-	ufputs(FT_STDOUT, "you are free to do whatever the fuck you want to do.\n");
-	ufputs(FT_STDOUT, "There is NO FUCKS GIVEN ABOUT WARRANITY, ");
-	ufputs(FT_STDOUT, "to the extent permitted by law.\n");
-	ufputc(FT_STDOUT, '\n');
-	ufputs(FT_STDOUT, "Written by jdeathlo and pparalax.\n");
+	uputs("minishell, version 0.1\n");
+	uputs("Copyright (C) 2020 Azat Bahawi <azahi@teknik.io>\n");
+	uputs("License WTFPL: version 2 or later <http://www.wtfpl.net/txt/copying/>\n");
+	uputc('\n');
+	uputs("This is non-free software; ");
+	uputs("you are free to do whatever the fuck you want to do.\n");
+	uputs("There is NO FUCKS GIVEN ABOUT WARRANITY, ");
+	uputs("to the extent permitted by law.\n");
+	uputc('\n');
+	uputs("Written by jdeathlo and pparalax.\n");
 	exit(EXIT_SUCCESS);
 }
 
 static void
 print_usage(void)
 {
-	ufputs(FT_STDOUT, "Usage: minishell [-vh]\n");
-	ufputs(FT_STDOUT, "\n\t-v\tprint version\n");
+	uputs("Usage: minishell [-vh]\n");
+	uputs("\n\t-v\tprint version\n");
 	exit(EXIT_SUCCESS);
 }
 
 static void
 sigint_shell()
 {
-	ufputc(FT_STDOUT, '\n');
+	uputc('\n');
 	prompt();
 }
 
@@ -131,16 +130,21 @@ main(int argc, char **argv)
 	argc -= g_optind;
 	argv += g_optind;
 
-	lenv_setenv("SHELL", shell, 1);
+	ft_setenv("SHELL", shell, 1);
 	while (1)
 	{
 		signal(SIGINT, sigint_shell);
 		prompt();
 		char *line = NULL;
-		if (ugetline(FT_STDIN, &line) != 1)
+		if (ugetl(&line) == -1)
 		{
-			ufputc(FT_STDOUT, '\n');
+			uputc('\n');
 			exit(EXIT_FAILURE);
+		}
+		if (!line)
+		{
+			uputc('\n');
+			exit(EXIT_SUCCESS);
 		}
 		int lc;
 		char **lv = sh_split(line, &lc);

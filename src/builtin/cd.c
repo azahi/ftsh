@@ -1,15 +1,14 @@
-#include <ft.h>
+#define _GNU_SOURCE
+
 #include <ft_stdlib.h>
 #include <ft_string.h>
-#include <ft_unistd.h>
+#include <uio.h>
 
 #ifdef __linux__
 #include <linux/limits.h>
 #else
 #include <limits.h>
 #endif
-
-#include "../env.h"
 
 int
 builtin_cd(int argc, char **argv)
@@ -31,16 +30,16 @@ builtin_cd(int argc, char **argv)
 	{
 		if (!ft_strcmp(target, "-"))
 		{
-			ufputsn(FT_STDERR, prev_dir);
+			ufputsn(STDERR_FILENO, prev_dir);
 			target = prev_dir;
 		}
 	}
 	if (!target)
-		target = lenv_getenv("HOME");
+		target = ft_getenv("HOME");
 	if (chdir(target) == -1)
 	{
-		ufputs(FT_STDERR, "cd: error: ");
-		ufputsn(FT_STDERR, target);
+		ufputs(STDERR_FILENO, "cd: error: ");
+		ufputsn(STDERR_FILENO, target);
 		return (1);
 	}
 	free(prev_dir);

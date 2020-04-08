@@ -1,4 +1,5 @@
-#include <ft.h>
+#define _GNU_SOURCE
+
 #include <ft_stdlib.h>
 #include <ft_string.h>
 #include <ft_unistd.h>
@@ -6,6 +7,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <uio.h>
 
 #ifdef __linux__
 #include <linux/limits.h>
@@ -14,8 +16,9 @@
 #endif
 
 #include "builtin/builtin.h"
-#include "env.h"
 #include "exec.h"
+
+extern char **environ;
 
 static int
 exec_proc(char *file, char **argv)
@@ -24,12 +27,12 @@ exec_proc(char *file, char **argv)
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
-		execve(file, argv, environ);
+		ft_execve(file, argv, environ);
 		exit(0);
 	}
 	else if (pid < 0)
 	{
-		ufputs(FT_STDERR, "minishell: failed to create a new process.\n");
+		ufputs(STDERR_FILENO, "minishell: failed to create a new process.\n");
 		return (1);
 	}
 	else
@@ -62,11 +65,11 @@ sh_exec_file(char **argv)
 	if (k > NAME_MAX)
 		return (1);
 
-	char *path = lenv_getenv("PATH");
+	char *path = ft_getenv("PATH");
 	if (!path)
 	{
-		ufputs(FT_STDERR, "minishell: command not found: ");
-		ufputsn(FT_STDERR, argv[0]);
+		ufputs(STDERR_FILENO, "minishell: command not found: ");
+		ufputsn(STDERR_FILENO, argv[0]);
 		return (1);
 	}
 	size_t l = ft_strlen(path);
@@ -93,8 +96,8 @@ sh_exec_file(char **argv)
 			break;
 		p = z;
 	}
-	ufputs(FT_STDERR, "minishell: command not found: ");
-	ufputsn(FT_STDERR, argv[0]);
+	ufputs(STDERR_FILENO, "minishell: command not found: ");
+	ufputsn(STDERR_FILENO, argv[0]);
 	return (1);
 }
 

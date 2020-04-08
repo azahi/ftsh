@@ -19,7 +19,6 @@ _SRC = \
 	builtin/exit.c \
 	builtin/setenv.c \
 	builtin/unsetenv.c \
-	env.c \
 	exec.c \
 	main.c \
 	prompt.c

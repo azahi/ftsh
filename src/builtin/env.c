@@ -1,6 +1,6 @@
-#include <ft.h>
+#include <uio.h>
 
-#include "../env.h"
+extern char **environ;
 
 int
 builtin_env(int argc, char **argv)
@@ -11,7 +11,7 @@ builtin_env(int argc, char **argv)
 	char **env = environ;
 	while(*env)
 	{
-		ufputsn(FT_STDOUT, *env);
+		uputsn(*env);
 		env++;
 	}
 	return (0);
