@@ -1,3 +1,6 @@
+[submodule "easymake"]
+	path = easymake
+	url = git@github.com:dangptrs/easymake.git
 [submodule "libft"]
 	path = libft
 	url = git@github.com:dangptrs/libft.git
