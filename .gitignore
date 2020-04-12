@@ -1,5 +1,12 @@
 *.a
 *.o
+/21sh
+/42sh
 /build/
+/cmake/
 /minishell
+/sh
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
 compile_commands.json

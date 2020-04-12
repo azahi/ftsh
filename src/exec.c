@@ -18,11 +18,11 @@
 #include "builtin/builtin.h"
 #include "exec.h"
 
-extern char **environ;
-
 static int
 exec_proc(char *file, char **argv)
 {
+	extern char **environ;
+
 	pid_t pid = fork();
 	if (pid == 0)
 	{
