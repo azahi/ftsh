@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.16)
+cmake_minimum_required(VERSION 3.1...3.17)
 
 if (${CMAKE_VERSION} VERSION_LESS 3.12)
         cmake_policy(VERSION {CMAKE_MAJOR_VERSION.${CMAKE_MINOR_VERSION}})
@@ -12,7 +12,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra")
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_subdirectory(lib/libft)
+add_subdirectory(libft)
 
 add_executable(minishell
         src/builtin/cd.c
