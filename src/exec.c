@@ -21,13 +21,11 @@
 static int
 exec_proc(char *file, char **argv)
 {
-	extern char **environ;
-
 	pid_t pid = fork();
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
-		ft_execve(file, argv, environ);
+		ft_execv(file, argv);
 		exit(0);
 	}
 	else if (pid < 0)
@@ -55,7 +53,7 @@ can_exec(char *file)
 	return (0);
 }
 
-static int
+int
 sh_exec_file(char **argv)
 {
 	if (ft_strchr(argv[0], '/') && can_exec(argv[0]))
@@ -79,7 +77,7 @@ sh_exec_file(char **argv)
 	while (1)
 	{
 		char b[l + k + 1];
-		z = ft_strchrnul(p, ':'); // bug
+		z = ft_strchrnul(p, ':');
 		if (!first && (size_t)z - (size_t)p >= l)
 		{
 			if (!*z++)

@@ -19,7 +19,7 @@ static char **
 sh_split(char *line, int *linec)
 {
 	int bufsize = MINISHELL_INPUT_BUFSIZE;
-	char **tokens = malloc(sizeof (*tokens) * bufsize);
+	char **tokens = ft_malloc(sizeof (*tokens) * bufsize);
 	char *token = ft_strtok(line, MINISHELL_INPUT_DELIMITERS);
 	int i = 0;
 	while (token)
@@ -36,7 +36,7 @@ sh_split(char *line, int *linec)
 			if (expanded)
 			{
 				size_t el = ft_strlen(expanded);
-				tokens[i] = malloc(sizeof (*tokens) * (el + etl));
+				tokens[i] = ft_malloc(sizeof (*tokens) * (el + etl));
 				ft_memcpy(tokens[i], token, etl);
 				ft_memcpy(tokens[i] + etl, expanded, el);
 				tokens[i][el + etl] = '\0';
@@ -55,11 +55,11 @@ sh_split(char *line, int *linec)
 			char *home_expand = ft_getenv("HOME");
 			size_t hl = ft_strlen(home_expand);
 			size_t tl = ft_strlen(tokens[i]);
-			char *tmp = malloc(sizeof (*tmp) * (hl + tl - 1));
+			char *tmp = ft_malloc(sizeof (*tmp) * (hl + tl - 1));
 			ft_memcpy(tmp, home_expand, hl);
 			ft_memcpy(tmp + hl, tokens[i] + 1, tl - 1);
 			tmp[hl + tl - 1] = '\0';
-			free(tokens[i]);
+			ft_free(tokens[i]);
 			tokens[i] = tmp;
 		}
 
@@ -68,11 +68,11 @@ sh_split(char *line, int *linec)
 		{
 			bufsize += MINISHELL_INPUT_BUFSIZE;
 			char **t;
-			if (!(t = malloc(sizeof (*t) * bufsize)))
+			if (!(t = ft_malloc(sizeof (*t) * bufsize)))
 				exit(EXIT_FAILURE);
 			for (int j = 0; j < bufsize - MINISHELL_INPUT_BUFSIZE; j++)
 				t[j] = tokens[j];
-			free(tokens);
+			ft_free(tokens);
 			tokens = t;
 		}
 		token = ft_strtok(NULL, MINISHELL_INPUT_DELIMITERS);
@@ -86,15 +86,6 @@ static void
 print_version(void)
 {
 	uputs("minishell, version 0.1\n");
-	uputs("Copyright (C) 2020 Azat Bahawi <azahi@teknik.io>\n");
-	uputs("License WTFPL: version 2 or later <http://www.wtfpl.net/txt/copying/>\n");
-	uputc('\n');
-	uputs("This is non-free software; ");
-	uputs("you are free to do whatever the fuck you want to do.\n");
-	uputs("There is NO FUCKS GIVEN ABOUT WARRANITY, ");
-	uputs("to the extent permitted by law.\n");
-	uputc('\n');
-	uputs("Written by jdeathlo and pparalax.\n");
 	exit(EXIT_SUCCESS);
 }
 
@@ -102,7 +93,7 @@ static void
 print_usage(void)
 {
 	uputs("Usage: minishell [-vh]\n");
-	uputs("\n\t-v\tprint version\n");
+	uputs("\n\t-v\tPrint version\n");
 	exit(EXIT_SUCCESS);
 }
 
@@ -148,27 +139,27 @@ main(int argc, char **argv)
 		}
 		int lc;
 		char **lv = sh_split(line, &lc);
-		free(line);
+		ft_free(line);
 		if (!lv)
 		{
 			char **lvp = lv;
 			while (*lvp)
 			{
-				free(*lvp);
+				ft_free(*lvp);
 				lvp++;
 			}
-			free(lv);
+			ft_free(lv);
 			exit(EXIT_FAILURE);
 		}
 		int status = sh_exec(lc, lv);
 		char **lvp = lv;
 		while (*lvp)
 		{
-			free(*lvp);
+			ft_free(*lvp);
 			lvp++;
 		}
-		free(lv);
-		if (status == -10)
+		ft_free(lv);
+		if (status == -42)
 			exit(EXIT_SUCCESS);
 	}
 }

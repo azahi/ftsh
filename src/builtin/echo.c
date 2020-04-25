@@ -5,7 +5,6 @@ int
 builtin_echo(int argc, char **argv)
 {
 	(void)argc;
-
 	int nonl = 0;
 	if (argv[1])
 	{
@@ -18,7 +17,8 @@ builtin_echo(int argc, char **argv)
 		while (*argv)
 		{
 			uputs(*argv);
-			uputc(' ');
+			if (*(argv + 1))
+				uputc(' ');
 			argv++;
 		}
 	}
