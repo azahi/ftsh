@@ -1,3 +1,5 @@
+#pragma GCC diagnostic ignored "-Wunused-result"
+
 #define _GNU_SOURCE
 
 #include <ft_stdlib.h>
@@ -17,7 +19,7 @@ builtin_cd(int argc, char **argv)
 
 	char *target = argv[1];
 	char buf[PATH_MAX];
-	if (!getcwd(buf, sizeof (buf)))
+	if (!getcwd(buf, sizeof buf))
 	{
 		uputs("cd: error: ");
 		uputsn(target);
@@ -40,7 +42,7 @@ builtin_cd(int argc, char **argv)
 		return (1);
 	}
 	ft_setenv("OLDPWD", buf, 1);
-	getcwd(buf, sizeof (buf));
+	getcwd(buf, sizeof buf);
 	ft_setenv("PWD", buf, 1);
 	return (0);
 }

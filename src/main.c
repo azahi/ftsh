@@ -19,7 +19,7 @@ static char **
 sh_split(char *line, int *linec)
 {
 	int bufsize = MINISHELL_INPUT_BUFSIZE;
-	char **tokens = ft_malloc(sizeof (*tokens) * bufsize);
+	char **tokens = ft_malloc(sizeof *tokens * bufsize);
 	char *token = ft_strtok(line, MINISHELL_INPUT_DELIMITERS);
 	int i = 0;
 	while (token)
@@ -36,7 +36,7 @@ sh_split(char *line, int *linec)
 			if (expanded)
 			{
 				size_t el = ft_strlen(expanded);
-				tokens[i] = ft_malloc(sizeof (*tokens) * (el + etl));
+				tokens[i] = ft_malloc(sizeof *tokens * (el + etl));
 				ft_memcpy(tokens[i], token, etl);
 				ft_memcpy(tokens[i] + etl, expanded, el);
 				tokens[i][el + etl] = '\0';
@@ -55,7 +55,7 @@ sh_split(char *line, int *linec)
 			char *home_expand = ft_getenv("HOME");
 			size_t hl = ft_strlen(home_expand);
 			size_t tl = ft_strlen(tokens[i]);
-			char *tmp = ft_malloc(sizeof (*tmp) * (hl + tl - 1));
+			char *tmp = ft_malloc(sizeof *tmp * (hl + tl - 1));
 			ft_memcpy(tmp, home_expand, hl);
 			ft_memcpy(tmp + hl, tokens[i] + 1, tl - 1);
 			tmp[hl + tl - 1] = '\0';
@@ -68,7 +68,7 @@ sh_split(char *line, int *linec)
 		{
 			bufsize += MINISHELL_INPUT_BUFSIZE;
 			char **t;
-			if (!(t = ft_malloc(sizeof (*t) * bufsize)))
+			if (!(t = ft_malloc(sizeof *t * bufsize)))
 				exit(EXIT_FAILURE);
 			for (int j = 0; j < bufsize - MINISHELL_INPUT_BUFSIZE; j++)
 				t[j] = tokens[j];
