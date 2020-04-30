@@ -14,7 +14,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(libft)
 
-add_executable(minishell
+add_executable(sh
         src/builtin/cd.c
         src/builtin/echo.c
         src/builtin/env.c
@@ -24,5 +24,5 @@ add_executable(minishell
         src/exec.c
         src/main.c
         src/prompt.c)
-target_link_libraries(minishell
+target_link_libraries(sh
         PUBLIC ft)

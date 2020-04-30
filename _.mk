@@ -1,4 +1,4 @@
-TARGET := minishell
+TARGET := sh
 
 TGT_LDFLAGS := -L$(TARGET_DIR)
 TGT_LDLIBS  := -lft
