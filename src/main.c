@@ -55,9 +55,9 @@ sh_split(char *line, int *linec)
 			char *home_expand = ft_getenv("HOME");
 			size_t hl = ft_strlen(home_expand);
 			size_t tl = ft_strlen(tokens[i]);
-			char *tmp = ft_malloc(sizeof *tmp * (hl + tl - 1));
+			char *tmp = ft_malloc(sizeof *tmp * (hl + tl));
 			ft_memcpy(tmp, home_expand, hl);
-			ft_memcpy(tmp + hl, tokens[i] + 1, tl - 1);
+			ft_memcpy(tmp + hl, tokens[i] + 1, tl);
 			tmp[hl + tl - 1] = '\0';
 			ft_free(tokens[i]);
 			tokens[i] = tmp;
@@ -93,7 +93,8 @@ static void
 print_usage(void)
 {
 	uputs("Usage: minishell [-vh]\n");
-	uputs("\n\t-v\tPrint version\n");
+	uputs("  -v  Print version\n");
+	uputs("  -h  Print this message\n");
 	exit(EXIT_SUCCESS);
 }
 
