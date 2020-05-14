@@ -1,3 +1,3 @@
-CFLAGS := -Werror -Wall -Wextra -std=c99 -pipe -O0 -g
+CFLAGS := -Werror -Wall -Wextra -std=c99 -pipe
 
 SUBMAKEFILES := ./_.mk
