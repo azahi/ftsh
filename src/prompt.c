@@ -5,9 +5,9 @@
 #include <uio.h>
 
 #ifdef __linux__
-#include <linux/limits.h>
+# include <linux/limits.h>
 #else
-#include <limits.h>
+# include <limits.h>
 #endif
 
 #include "prompt.h"
@@ -17,21 +17,24 @@
 /**
  * Display a prompt message.
  */
-void
-prompt(void)
+void	prompt(void)
 {
+	char	*cwd;
+	char	*home;
+	char	buf[PATH_MAX + 1];
+	char	host[HOSTNAME_SIZE];
+	size_t	home_l;
+
 	uputs(ft_getenv("USER"));
-	char host[HOSTNAME_SIZE] = { 0 };
 	if (!gethostname(host, HOSTNAME_SIZE))
 	{
 		uputc('@');
 		uputs(host);
 	}
 	uputc(':');
-	char buf[PATH_MAX + 1];
-	char *cwd = getcwd(buf, PATH_MAX);
-	char *home = ft_getenv("HOME");
-	size_t home_l = ft_strlen(home);
+	cwd = getcwd(buf, PATH_MAX);
+	home = ft_getenv("HOME");
+	home_l = ft_strlen(home);
 	if (!ft_strncmp(cwd, home, home_l))
 	{
 		uputc('~');

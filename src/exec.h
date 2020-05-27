@@ -1,6 +1,6 @@
-#ifndef __EXEC_H__
-#define __EXEC_H__
+#ifndef EXEC_H
+# define EXEC_H
 
-int sh_exec(int argc, char **argv);
+int	sh_exec(int a, char **b);
 
-#endif /* !__EXEC_H__ */
+#endif

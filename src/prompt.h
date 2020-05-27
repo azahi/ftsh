@@ -1,6 +1,6 @@
-#ifndef __PROMPT_H__
-#define __PROMPT_H__
+#ifndef PROMPT_H
+# define PROMPT_H
 
-void prompt(void);
+void	prompt(void);
 
-#endif /* !__PROMPT_H__ */
+#endif

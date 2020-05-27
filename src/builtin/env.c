@@ -1,14 +1,14 @@
 #include <uio.h>
 
-int
-builtin_env(int argc, char **argv)
+int	builtin_env(int argc, char **argv)
 {
 	extern char	**environ;
+	char		**e;
 
 	(void)argc;
 	(void)argv;
-	char **e = environ;
-	while(*e)
+	e = environ;
+	while (*e)
 	{
 		uputsn(*e);
 		e++;

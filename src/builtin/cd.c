@@ -7,25 +7,26 @@
 #include <uio.h>
 
 #ifdef __linux__
-#include <linux/limits.h>
+# include <linux/limits.h>
 #else
-#include <limits.h>
+# include <limits.h>
 #endif
 
-int
-builtin_cd(int argc, char **argv)
+int	builtin_cd(int argc, char **argv)
 {
-	(void)argc;
+	char	*oldpwd;
+	char	*target;
+	char	buf[PATH_MAX];
 
-	char *target = argv[1];
-	char buf[PATH_MAX];
+	(void)argc;
+	target = argv[1];
 	if (!getcwd(buf, sizeof buf))
 	{
 		uputs("cd: error: ");
 		uputsn(target);
 		return (1);
 	}
-	char *oldpwd = ft_getenv("OLDPWD");
+	oldpwd = ft_getenv("OLDPWD");
 	if (!oldpwd)
 		oldpwd = ft_strdup(buf);
 	if (!target)

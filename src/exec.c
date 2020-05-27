@@ -10,18 +10,20 @@
 #include <uio.h>
 
 #ifdef __linux__
-#include <linux/limits.h>
+# include <linux/limits.h>
 #else
-#include <limits.h>
+# include <limits.h>
 #endif
 
 #include "builtin/builtin.h"
 #include "exec.h"
 
-static int
-exec_proc(char *file, char **argv)
+static int	exec_proc(char *file, char **argv)
 {
-	pid_t pid = fork();
+	int		wstatus;
+	pid_t	pid;
+
+	pid = fork();
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
@@ -34,17 +36,14 @@ exec_proc(char *file, char **argv)
 		return (1);
 	}
 	else
-	{
-		int wstatus;
 		waitpid(pid, &wstatus, WUNTRACED);
-	}
 	return (0);
 }
 
-static int
-can_exec(char *file)
+static int	can_exec(char *file)
 {
-	struct stat st;
+	struct stat	st;
+
 	if (!stat(file, &st))
 	{
 		if (st.st_mode & S_IXUSR)
@@ -53,30 +52,33 @@ can_exec(char *file)
 	return (0);
 }
 
-int
-sh_exec_file(char **argv)
+int			sh_exec_file(char **argv)
 {
+	char		*path;
+	char		b[PATH_MAX + NAME_MAX + 1];
+	const char	*p;
+	const char	*z;
+	int			first;
+	size_t		k;
+	size_t		l;
+
 	if (ft_strchr(argv[0], '/') && can_exec(argv[0]))
 		return (exec_proc(argv[0], argv));
-
-	size_t k = ft_strnlen(argv[0], NAME_MAX + 1);
+	k = ft_strnlen(argv[0], NAME_MAX + 1);
 	if (k > NAME_MAX)
 		return (1);
-
-	char *path = ft_getenv("PATH");
+	path = ft_getenv("PATH");
 	if (!path)
 	{
 		ufputs(STDERR_FILENO, "minishell: command not found: ");
 		ufputsn(STDERR_FILENO, argv[0]);
 		return (1);
 	}
-	size_t l = ft_strlen(path);
-
-	const char *p = path, *z;
-	int first = 1;
+	l = ft_strlen(path);
+	p = path;
+	first = 1;
 	while (1)
 	{
-		char b[l + k + 1];
 		z = ft_strchrnul(p, ':');
 		if (!first && (size_t)z - (size_t)p >= l)
 		{
@@ -99,14 +101,15 @@ sh_exec_file(char **argv)
 	return (1);
 }
 
-static int
-sh_exec_builtin(int argc, char **argv)
+static int	sh_exec_builtin(int argc, char **argv)
 {
-	int i = 0;
+	int i;
+
+	i = 0;
 	while (i < BUILTIN_COUNT)
 	{
-		if (!ft_strcmp(argv[0], builtin_names[i]))
-			return ((*builtin_func[i])(argc, argv));
+		if (!ft_strcmp(argv[0], g_builtin_names[i]))
+			return ((*g_builtin_funcs[i])(argc, argv));
 		i++;
 	}
 	return (-1);
@@ -115,9 +118,10 @@ sh_exec_builtin(int argc, char **argv)
 int
 sh_exec(int argc, char **argv)
 {
+	int ret;
+
 	if (!argv[0])
 		return (1);
-	int ret;
 	if ((ret = sh_exec_builtin(argc, argv)) != -1)
 		return (ret);
 	return (sh_exec_file(argv));

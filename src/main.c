@@ -15,28 +15,38 @@
 /**
  * Splits input into arguments.
  */
-static char **
-sh_split(char *line, int *linec)
+static char	**sh_split(char *line, int *linec)
 {
-	int bufsize = MINISHELL_INPUT_BUFSIZE;
-	char **tokens = ft_malloc(sizeof *tokens * bufsize);
-	char *token = ft_strtok(line, MINISHELL_INPUT_DELIMITERS);
-	int i = 0;
+	char	**t;
+	char	**tokens;
+	char	*token;
+	int		bufsize;
+	int		i;
+
+	bufsize = MINISHELL_INPUT_BUFSIZE;
+	tokens = ft_malloc(sizeof(*tokens) * bufsize);
+	token = ft_strtok(line, MINISHELL_INPUT_DELIMITERS);
+	i = 0;
 	while (token)
 	{
 		/**
 		 * Environment variable expansion.
 		 */
-		char *expand = ft_strchr(token, '$');
+		char	*expand;
+		char	*expanded;
+		size_t	el;
+		size_t	etl;
+
+		expand = ft_strchr(token, '$');
 		if (expand)
 		{
 			expand++;
-			size_t etl = expand - token - 1;
-			char *expanded = ft_getenv(expand);
+			etl = expand - token - 1;
+			expanded = ft_getenv(expand);
 			if (expanded)
 			{
-				size_t el = ft_strlen(expanded);
-				tokens[i] = ft_malloc(sizeof *tokens * (el + etl));
+				el = ft_strlen(expanded);
+				tokens[i] = ft_malloc(sizeof(*tokens) * (el + etl));
 				ft_memcpy(tokens[i], token, etl);
 				ft_memcpy(tokens[i] + etl, expanded, el);
 				tokens[i][el + etl] = '\0';
@@ -52,10 +62,15 @@ sh_split(char *line, int *linec)
 		 */
 		if (*tokens[i] == '~')
 		{
-			char *home_expand = ft_getenv("HOME");
-			size_t hl = ft_strlen(home_expand);
-			size_t tl = ft_strlen(tokens[i]);
-			char *tmp = ft_malloc(sizeof *tmp * (hl + tl));
+			char	*home_expand;
+			char	*tmp;
+			size_t	hl;
+			size_t	tl;
+
+			home_expand = ft_getenv("HOME");
+			hl = ft_strlen(home_expand);
+			tl = ft_strlen(tokens[i]);
+			tmp = ft_malloc(sizeof(*tmp) * (hl + tl));
 			ft_memcpy(tmp, home_expand, hl);
 			ft_memcpy(tmp + hl, tokens[i] + 1, tl);
 			tmp[hl + tl - 1] = '\0';
@@ -67,8 +82,7 @@ sh_split(char *line, int *linec)
 		if (i >= bufsize)
 		{
 			bufsize += MINISHELL_INPUT_BUFSIZE;
-			char **t;
-			if (!(t = ft_malloc(sizeof *t * bufsize)))
+			if (!(t = ft_malloc(sizeof(*t) * bufsize)))
 				exit(EXIT_FAILURE);
 			for (int j = 0; j < bufsize - MINISHELL_INPUT_BUFSIZE; j++)
 				t[j] = tokens[j];
@@ -82,15 +96,13 @@ sh_split(char *line, int *linec)
 	return (tokens);
 }
 
-static void
-print_version(void)
+static void	print_version(void)
 {
 	uputs("minishell, version 0.1\n");
 	exit(EXIT_SUCCESS);
 }
 
-static void
-print_usage(void)
+static void	print_usage(void)
 {
 	uputs("Usage: minishell [-vh]\n");
 	uputs("  -v  Print version\n");
@@ -98,18 +110,23 @@ print_usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void
-sigint_shell()
+static void	sigint_shell()
 {
 	uputc('\n');
 	prompt();
 }
 
-int
-main(int argc, char **argv)
+int			main(int argc, char **argv)
 {
-	char ch;
-	char *shell = argv[0];
+	char	**lv;
+	char	**lvp;
+	char	*line;
+	char	*shell;
+	char	ch;
+	int		lc;
+	int		status;
+
+	shell = argv[0];
 	while ((ch = ft_getopt(argc, argv, "v")) != -1)
 	{
 		if (ch == 'v')
@@ -127,7 +144,7 @@ main(int argc, char **argv)
 	{
 		signal(SIGINT, sigint_shell);
 		prompt();
-		char *line = NULL;
+		line = NULL;
 		if (ugetl(&line) == -1)
 		{
 			uputc('\n');
@@ -138,12 +155,11 @@ main(int argc, char **argv)
 			uputc('\n');
 			exit(EXIT_SUCCESS);
 		}
-		int lc;
-		char **lv = sh_split(line, &lc);
+		lv = sh_split(line, &lc);
 		ft_free(line);
 		if (!lv)
 		{
-			char **lvp = lv;
+			lvp = lv;
 			while (*lvp)
 			{
 				ft_free(*lvp);
@@ -152,8 +168,8 @@ main(int argc, char **argv)
 			ft_free(lv);
 			exit(EXIT_FAILURE);
 		}
-		int status = sh_exec(lc, lv);
-		char **lvp = lv;
+		status = sh_exec(lc, lv);
+		lvp = lv;
 		while (*lvp)
 		{
 			ft_free(*lvp);
