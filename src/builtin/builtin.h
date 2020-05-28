@@ -1,7 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdeathlo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/05/28 11:00:28 by jdeathlo          #+#    #+#             */
+/*   Updated: 2020/05/28 11:05:13 by jdeathlo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef BUILTIN_H
 # define BUILTIN_H
-
-# define BUILTIN_COUNT 6
 
 int			builtin_cd(int a, char **b);
 int			builtin_echo(int a, char **b);
@@ -19,6 +29,7 @@ const char	*g_builtin_names[] =
 	"setenv",
 	"unsetenv"
 };
+const int	g_builtin_count = sizeof(g_builtin_names) / sizeof(char **);
 
 int			(*g_builtin_funcs[])(int, char **) =
 {

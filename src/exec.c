@@ -106,7 +106,7 @@ static int	sh_exec_builtin(int argc, char **argv)
 	int i;
 
 	i = 0;
-	while (i < BUILTIN_COUNT)
+	while (i < g_builtin_count)
 	{
 		if (!ft_strcmp(argv[0], g_builtin_names[i]))
 			return ((*g_builtin_funcs[i])(argc, argv));
