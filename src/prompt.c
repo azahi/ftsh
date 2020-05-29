@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   prompt.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdeathlo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/05/28 11:15:20 by jdeathlo          #+#    #+#             */
+/*   Updated: 2020/05/28 12:44:53 by jdeathlo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #define _GNU_SOURCE
 
 #include <ft_stdlib.h>
@@ -12,12 +24,13 @@
 
 #include "prompt.h"
 
-#define HOSTNAME_SIZE 64
+#ifdef _POSIX_HOST_NAME_MAX
+# define HOSTNAME_SIZE _POSIX_HOST_NAME_MAX
+#else
+# define HOSTNAME_SIZE 255
+#endif
 
-/**
- * Display a prompt message.
- */
-void	prompt(void)
+static void	prompt_full(void)
 {
 	char	*cwd;
 	char	*home;
@@ -43,4 +56,12 @@ void	prompt(void)
 	else
 		uputs(cwd);
 	uputs(" $ ");
+}
+
+void		prompt(void)
+{
+	if (!ft_getenv("HOME") || !ft_getenv("USER"))
+		uputs("$> ");
+	else
+		prompt_full();
 }

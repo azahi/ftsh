@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec.h                                             :+:      :+:    :+:   */
+/*   split.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jdeathlo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/05/28 11:19:37 by jdeathlo          #+#    #+#             */
-/*   Updated: 2020/05/28 13:30:02 by jdeathlo         ###   ########.fr       */
+/*   Created: 2020/05/28 12:47:04 by jdeathlo          #+#    #+#             */
+/*   Updated: 2020/05/28 12:48:58 by jdeathlo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXEC_H
-# define EXEC_H
+#ifndef SPLIT_H
+# define SPLIT_H
 
-int	sh_exec(int a, char **b);
+char	**sh_split(char *a, int *b);
 
 #endif

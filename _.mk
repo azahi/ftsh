@@ -1,5 +1,7 @@
-TARGET := sh
+TARGET  := minishell
+VERSION := 1.0.0
 
+TGT_CFLAGS  := -DSH_NAME=\"$(TARGET)\" -DSH_VERSION=\"$(VERSION)\"
 TGT_LDFLAGS := -L$(TARGET_DIR)
 TGT_LDLIBS  := -lft
 TGT_PREREQS := libft.a

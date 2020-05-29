@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdeathlo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/05/28 11:19:50 by jdeathlo          #+#    #+#             */
+/*   Updated: 2020/05/28 12:33:33 by jdeathlo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #define _GNU_SOURCE
 
 #include <ft_stdlib.h>
@@ -40,6 +52,18 @@ static int	exec_proc(char *file, char **argv)
 	return (0);
 }
 
+static int	is_file(char *file)
+{
+	struct stat	st;
+
+	if (!(stat(file, &st)))
+		return (1);
+	ufputs(STDERR_FILENO, ft_getenv("SHELL"));
+	ufputs(STDERR_FILENO, ": no such file or directory: ");
+	ufputsn(STDERR_FILENO, file);
+	return (0);
+}
+
 static int	can_exec(char *file)
 {
 	struct stat	st;
@@ -48,6 +72,32 @@ static int	can_exec(char *file)
 	{
 		if (st.st_mode & S_IXUSR)
 			return (1);
+	}
+	return (0);
+}
+
+static int	sh_exec_file_errnotfound(const char cmd[])
+{
+	ufputs(STDERR_FILENO, "minishell: command not found: ");
+	ufputsn(STDERR_FILENO, cmd);
+	return (1);
+}
+
+static int	sh_exec_file_path(char **argv)
+{
+	if (ft_strchr(argv[0], '/'))
+	{
+		if (!is_file(argv[0]))
+			return (1);
+		if (can_exec(argv[0]))
+			return (exec_proc(argv[0], argv));
+		else
+		{
+			ufputs(STDERR_FILENO, getenv("SHELL"));
+			ufputs(STDERR_FILENO, ": permission denied: ");
+			ufputsn(STDERR_FILENO, argv[0]);
+			return (1);
+		}
 	}
 	return (0);
 }
@@ -62,18 +112,15 @@ int			sh_exec_file(char **argv)
 	size_t		k;
 	size_t		l;
 
-	if (ft_strchr(argv[0], '/') && can_exec(argv[0]))
-		return (exec_proc(argv[0], argv));
-	k = ft_strnlen(argv[0], NAME_MAX + 1);
-	if (k > NAME_MAX)
+	if (sh_exec_file_path(argv))
 		return (1);
-	path = ft_getenv("PATH");
-	if (!path)
-	{
-		ufputs(STDERR_FILENO, "minishell: command not found: ");
-		ufputsn(STDERR_FILENO, argv[0]);
+
+	if ((k = ft_strnlen(argv[0], NAME_MAX + 1)) > NAME_MAX)
 		return (1);
-	}
+
+	if (!(path = ft_getenv("PATH")))
+		return (sh_exec_file_errnotfound(argv[0]));
+
 	l = ft_strlen(path);
 	p = path;
 	first = 1;
@@ -83,7 +130,7 @@ int			sh_exec_file(char **argv)
 		if (!first && (size_t)z - (size_t)p >= l)
 		{
 			if (!*z++)
-				break;
+				break ;
 			continue;
 		}
 		first = 0;
@@ -93,12 +140,10 @@ int			sh_exec_file(char **argv)
 		if (can_exec(b))
 			return (exec_proc(b, argv));
 		if (!*z++)
-			break;
+			break ;
 		p = z;
 	}
-	ufputs(STDERR_FILENO, "minishell: command not found: ");
-	ufputsn(STDERR_FILENO, argv[0]);
-	return (1);
+	return (sh_exec_file_errnotfound(argv[0]));
 }
 
 static int	sh_exec_builtin(int argc, char **argv)
@@ -115,8 +160,7 @@ static int	sh_exec_builtin(int argc, char **argv)
 	return (-1);
 }
 
-int
-sh_exec(int argc, char **argv)
+int			sh_exec(int argc, char **argv)
 {
 	int ret;
 

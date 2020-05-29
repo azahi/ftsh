@@ -1,7 +1,9 @@
 SOURCES := \
 	./exec.c \
+	./loop.c \
 	./main.c \
-	./prompt.c
+	./prompt.c \
+	./split.c
 
 SRC_INCDIRS := ../libft/include
 
