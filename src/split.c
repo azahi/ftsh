@@ -6,7 +6,7 @@
 /*   By: jdeathlo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 12:46:11 by jdeathlo          #+#    #+#             */
-/*   Updated: 2020/05/29 13:41:05 by jdeathlo         ###   ########.fr       */
+/*   Updated: 2020/05/30 23:47:47 by jdeathlo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,44 +16,39 @@
 #include <ft_stdlib.h>
 #include <ft_string.h>
 
-#include <stdio.h>
-
 #include "split.h"
 
-#define MINISHELL_INPUT_BUFSIZE 8
 #define MINISHELL_INPUT_DELIMITERS "\t\n\v\f\r "
 
-/*
-** TODO Fix cases for "$HOME/src"
-*/
 
-static char	**sh_split_env(int i, char *token, char **tokens)
+static char	**sh_split_env(int i, char *tok, char **argv)
 {
 	char	*expand;
 	char	*expanded;
 	size_t	el;
 	size_t	etl;
 
-	expand = ft_strchr(token, '$');
+	// TODO Fix cases for "$HOME/src"
+	expand = ft_strchr(tok, '$');
 	if (expand)
 	{
 		expand++;
-		etl = expand - token - 1;
+		etl = expand - tok - 1;
 		expanded = ft_getenv(expand);
 		if (expanded)
 		{
 			el = ft_strlen(expanded);
-			tokens[i] = ft_malloc(sizeof(*tokens) * (el + etl));
-			ft_memcpy(tokens[i], token, etl);
-			ft_memcpy(tokens[i] + etl, expanded, el);
-			tokens[i][el + etl] = '\0';
+			argv[i] = ft_malloc(sizeof(*argv) * (el + etl));
+			ft_memcpy(argv[i], tok, etl);
+			ft_memcpy(argv[i] + etl, expanded, el);
+			argv[i][el + etl] = '\0';
 		}
-		else if (!(tokens[i] = ft_strndup(token, etl)))
+		else if (!(argv[i] = ft_strndup(tok, etl)))
 			exit(ENOMEM);
 	}
-	else if (!(tokens[i] = ft_strdup(token)))
+	else if (!(argv[i] = ft_strdup(tok)))
 		exit(ENOMEM);
-	return (tokens);
+	return (argv);
 }
 
 static char	*sh_split_home(char *tok)
@@ -79,39 +74,32 @@ static char	*sh_split_home(char *tok)
 	return (tok);
 }
 
-char		**sh_split(char *line, int *linec)
+static char	**expand_argv(char **argv, int i) // TODO This shit.
 {
-	char	**tmp;
-	char	**tokens;
-	char	*token;
-	int		bufsize;
-	int		i;
-	int		j;
-
-	bufsize = MINISHELL_INPUT_BUFSIZE;
-	if (!(tokens = ft_malloc(sizeof(*tokens) * bufsize)))
+	if (!(argv = ft_realloc(argv, sizeof(*argv) * (i + 1))))
 		exit(ENOMEM);
-	token = ft_strtok(line, MINISHELL_INPUT_DELIMITERS);
-	i = 0;
-	while (token)
-	{
-		tokens = sh_split_env(i, token, tokens);
-		tokens[i] = sh_split_home(tokens[i]);
-		i++;
-		if (i >= bufsize)
-		{
-			bufsize += MINISHELL_INPUT_BUFSIZE;
-			if (!(tmp = ft_malloc(sizeof(*tmp) * bufsize)))
-				exit(ENOMEM);
-			for (j = 0; j < bufsize - MINISHELL_INPUT_BUFSIZE; j++)
-				tmp[j] = tokens[j];
-			ft_free(tokens);
-			tokens = tmp;
-		}
-		token = ft_strtok(NULL, MINISHELL_INPUT_DELIMITERS);
-	}
-	tokens[i] = NULL;
-	*linec = i;
+	return (argv);
+}
 
-	return (tokens);
+char		**sh_split(char *line, int *argc)
+{
+	char	**argv;
+	char	*tok;
+	int		i;
+
+	if (!(argv = ft_malloc(sizeof(*argv))))
+		exit(ENOMEM);
+	tok = ft_strtok(line, MINISHELL_INPUT_DELIMITERS);
+	i = 0;
+	while (tok)
+	{
+		argv = sh_split_env(i, tok, argv); // TODO Make this look better.
+		argv[i] = sh_split_home(argv[i]);
+		i++; // This is just can't comprehend.
+		argv = expand_argv(argv, i);
+		tok = ft_strtok(NULL, MINISHELL_INPUT_DELIMITERS);
+	}
+	argv[i] = NULL;
+	*argc = i;
+	return (argv);
 }

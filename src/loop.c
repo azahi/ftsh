@@ -6,7 +6,7 @@
 /*   By: jdeathlo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 13:24:47 by jdeathlo          #+#    #+#             */
-/*   Updated: 2020/05/28 13:26:30 by jdeathlo         ###   ########.fr       */
+/*   Updated: 2020/05/30 23:51:24 by jdeathlo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,9 @@ int			sh_loop(void)
 	int		lc;
 	int		status;
 
-	signal(SIGINT, sigint_shell);
-	while (1)
+	while (1) // TODO Cleanup.
 	{
+		signal(SIGINT, sigint_shell);
 		prompt();
 		line = NULL;
 		if (ugetl(&line) == -1)

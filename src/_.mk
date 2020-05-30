@@ -1,5 +1,6 @@
 SOURCES := \
 	./exec.c \
+	./exec_util.c \
 	./loop.c \
 	./main.c \
 	./prompt.c \

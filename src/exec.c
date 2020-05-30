@@ -6,7 +6,7 @@
 /*   By: jdeathlo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 11:19:50 by jdeathlo          #+#    #+#             */
-/*   Updated: 2020/05/28 12:33:33 by jdeathlo         ###   ########.fr       */
+/*   Updated: 2020/05/30 23:51:04 by jdeathlo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,6 @@
 #include <ft_stdlib.h>
 #include <ft_string.h>
 #include <ft_unistd.h>
-#include <signal.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 #include <uio.h>
 
@@ -27,9 +24,11 @@
 # include <limits.h>
 #endif
 
-#include "builtin/builtin.h"
 #include "exec.h"
+#include "exec_util.h"
 
+ // FIXME Fix that retarded command not found after fullpath command is
+ // done executing.
 static int	exec_proc(char *file, char **argv)
 {
 	int		wstatus;
@@ -52,37 +51,6 @@ static int	exec_proc(char *file, char **argv)
 	return (0);
 }
 
-static int	is_file(char *file)
-{
-	struct stat	st;
-
-	if (!(stat(file, &st)))
-		return (1);
-	ufputs(STDERR_FILENO, ft_getenv("SHELL"));
-	ufputs(STDERR_FILENO, ": no such file or directory: ");
-	ufputsn(STDERR_FILENO, file);
-	return (0);
-}
-
-static int	can_exec(char *file)
-{
-	struct stat	st;
-
-	if (!stat(file, &st))
-	{
-		if (st.st_mode & S_IXUSR)
-			return (1);
-	}
-	return (0);
-}
-
-static int	sh_exec_file_errnotfound(const char cmd[])
-{
-	ufputs(STDERR_FILENO, "minishell: command not found: ");
-	ufputsn(STDERR_FILENO, cmd);
-	return (1);
-}
-
 static int	sh_exec_file_path(char **argv)
 {
 	if (ft_strchr(argv[0], '/'))
@@ -102,32 +70,18 @@ static int	sh_exec_file_path(char **argv)
 	return (0);
 }
 
-int			sh_exec_file(char **argv)
+static int	sh_exec_file_pathloop(char *p, size_t pathl, char **argv,
+		size_t arg0l)
 {
-	char		*path;
-	char		b[PATH_MAX + NAME_MAX + 1];
-	const char	*p;
-	const char	*z;
-	int			first;
-	size_t		k;
-	size_t		l;
+	char	*z;
+	char	b[PATH_MAX + NAME_MAX + 1]; // TODO Find a way to make the size smaller with "k + l + 1"
+	int		first;
 
-	if (sh_exec_file_path(argv))
-		return (1);
-
-	if ((k = ft_strnlen(argv[0], NAME_MAX + 1)) > NAME_MAX)
-		return (1);
-
-	if (!(path = ft_getenv("PATH")))
-		return (sh_exec_file_errnotfound(argv[0]));
-
-	l = ft_strlen(path);
-	p = path;
 	first = 1;
 	while (1)
 	{
 		z = ft_strchrnul(p, ':');
-		if (!first && (size_t)z - (size_t)p >= l)
+		if (!first && (size_t)z - (size_t)p >= pathl)
 		{
 			if (!*z++)
 				break ;
@@ -136,28 +90,33 @@ int			sh_exec_file(char **argv)
 		first = 0;
 		ft_memcpy(b, p, z - p);
 		b[z - p] = '/';
-		ft_memcpy(b + (z - p) + (z > p), argv[0], k + 1);
+		ft_memcpy(b + (z - p) + (z > p), argv[0], arg0l + 1);
 		if (can_exec(b))
 			return (exec_proc(b, argv));
 		if (!*z++)
 			break ;
 		p = z;
 	}
-	return (sh_exec_file_errnotfound(argv[0]));
+	return (-1);
 }
 
-static int	sh_exec_builtin(int argc, char **argv)
+int			sh_exec_file(char **argv)
 {
-	int i;
+	char		*path;
+	int			status;
+	size_t		arg0l;
+	size_t		pathl;
 
-	i = 0;
-	while (i < g_builtin_count)
-	{
-		if (!ft_strcmp(argv[0], g_builtin_names[i]))
-			return ((*g_builtin_funcs[i])(argc, argv));
-		i++;
-	}
-	return (-1);
+	if (sh_exec_file_path(argv))
+		return (1);
+	if ((arg0l = ft_strnlen(argv[0], NAME_MAX + 1)) > NAME_MAX)
+		return (1);
+	if (!(path = ft_getenv("PATH")))
+		return (sh_exec_file_errnotfound(argv[0]));
+	pathl = ft_strlen(path);
+	if ((status = sh_exec_file_pathloop(path, pathl, argv, arg0l)) != -1)
+		return (status);
+	return (sh_exec_file_errnotfound(argv[0]));
 }
 
 int			sh_exec(int argc, char **argv)

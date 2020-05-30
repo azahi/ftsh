@@ -22,6 +22,7 @@ add_executable(minishell
         src/builtin/setenv.c
         src/builtin/unsetenv.c
         src/exec.c
+        src/exec_util.c
         src/loop.c
         src/main.c
         src/prompt.c
