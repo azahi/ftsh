@@ -1,4 +1,5 @@
 SOURCES := \
+	./ckmalloc.c \
 	./exec.c \
 	./exec_util.c \
 	./loop.c \

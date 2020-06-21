@@ -6,7 +6,7 @@
 /*   By: jdeathlo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 12:46:11 by jdeathlo          #+#    #+#             */
-/*   Updated: 2020/05/30 23:47:47 by jdeathlo         ###   ########.fr       */
+/*   Updated: 2020/06/19 13:00:29 by jdeathlo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <ft_stdlib.h>
 #include <ft_string.h>
 
+#include "ckmalloc.h"
 #include "split.h"
 
 #define MINISHELL_INPUT_DELIMITERS "\t\n\v\f\r "
@@ -38,7 +39,7 @@ static char	**sh_split_env(int i, char *tok, char **argv)
 		if (expanded)
 		{
 			el = ft_strlen(expanded);
-			argv[i] = ft_malloc(sizeof(*argv) * (el + etl));
+			argv[i] = ckmalloc(sizeof(*argv) * (el + etl));
 			ft_memcpy(argv[i], tok, etl);
 			ft_memcpy(argv[i] + etl, expanded, el);
 			argv[i][el + etl] = '\0';
@@ -63,7 +64,7 @@ static char	*sh_split_home(char *tok)
 		var = ft_getenv("HOME");
 		varlen = ft_strlen(var);
 		toklen = ft_strlen(tok);
-		if (!(tmp = ft_malloc(sizeof(*tmp) * (varlen + toklen))))
+		if (!(tmp = ckmalloc(sizeof(*tmp) * (varlen + toklen))))
 			exit(ENOMEM);
 		ft_memcpy(tmp, var, varlen);
 		ft_memcpy(tmp + varlen, tok + 1, toklen);
@@ -87,7 +88,7 @@ char		**sh_split(char *line, int *argc)
 	char	*tok;
 	int		i;
 
-	if (!(argv = ft_malloc(sizeof(*argv))))
+	if (!(argv = ckmalloc(sizeof(*argv))))
 		exit(ENOMEM);
 	tok = ft_strtok(line, MINISHELL_INPUT_DELIMITERS);
 	i = 0;

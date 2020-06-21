@@ -1,7 +1,9 @@
-TARGET  := minishell
-VERSION := 1.0.0
+SH_NAME    ?= sh
+SH_VERSION ?= 0.0.0
 
-TGT_CFLAGS  := -DSH_NAME=\"$(TARGET)\" -DSH_VERSION=\"$(VERSION)\"
+TARGET  := $(SH_NAME)
+
+TGT_CFLAGS  := -DSH_NAME=\"$(SH_NAME)\" -DSH_VERSION=\"$(SH_VERSION)\"
 TGT_LDFLAGS := -L$(TARGET_DIR)
 TGT_LDLIBS  := -lft
 TGT_PREREQS := libft.a
@@ -10,12 +12,6 @@ ifdef DEBUG_ASAN
     DEBUG       := 1
     TGT_CFLAGS  += -fsanitize=address -fsanitize-address-use-after-scope
     TGT_LDFLAGS += -fsanitize=address
-endif
-
-ifdef DEBUG_UBSAN
-    DEBUG       := 1
-    TGT_CFLAGS  += -fsanitize=undefined
-    TGT_LDFLAGS += -fsanitize=undefined
 endif
 
 ifdef DEBUG

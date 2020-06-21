@@ -1,6 +1,5 @@
 {
-    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
-    "files.associations": {
+	"files.associations": {
         "cstdlib": "c"
     }
 }
